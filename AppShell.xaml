@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Shell
+    x:Class="SleepHaven.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SleepHaven"
+    Title="SleepHaven">
+
+    <TabBar>
+        <ShellContent
+        x:Name="TabHome"
+        Title="Home"
+        Icon="home_off.png" 
+        ContentTemplate="{DataTemplate local:HomePage}" />
+
+        <ShellContent
+        x:Name="TabCategory"
+        Title="Category"
+        Icon="category_off.png"
+        ContentTemplate="{DataTemplate local:CategoryPage}" />
+
+        <ShellContent
+        x:Name="TabCollection"
+        Title="Collect"
+        Icon="collection_off.png"
+        ContentTemplate="{DataTemplate local:CollectionPage}" />
+    </TabBar>
+</Shell>

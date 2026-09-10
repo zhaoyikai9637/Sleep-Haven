@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SleepHaven.CollectionPage"
+             Title="My Collection">
+
+    <Grid RowDefinitions="Auto, *">
+
+        <Label x:Name="EmptyStateLabel" 
+               Grid.Row="1" 
+               Text="Your collection is empty. Go find some sleep inspiration!"
+               HorizontalOptions="Center" 
+               VerticalOptions="Center" 
+               TextColor="Gray" 
+               IsVisible="False"/>
+
+        <CollectionView x:Name="FavoritesCollectionView" 
+                        Grid.Row="1" 
+                        Margin="15,0"
+                        SelectionMode="Single"
+                        SelectionChanged="OnProductSelected">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Stroke="Gray" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10" Margin="0,0,0,15">
+                        <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="15">
+
+                            <Border Grid.Column="0" Stroke="Gray" StrokeThickness="1" HeightRequest="80" WidthRequest="80">
+                                <Image Source="{Binding ThumbnailUrl}" Aspect="AspectFill"/>
+                            </Border>
+
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="5">
+                                <Label Text="{Binding Name}" FontAttributes="Bold" FontSize="16" TextColor="Black"/>
+                                <Label Text="{Binding Category}" FontSize="12" TextColor="Gray"/>
+                                <Label Text="{Binding Price}" FontSize="14" TextColor="#2DE2E6" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+
+                            <Button Grid.Column="2"
+                                    Text="一" 
+                                    FontSize="18"
+                                    FontAttributes="Bold"
+                                    TextColor="#2DE2E6"
+                                    BackgroundColor="Transparent"
+                                    BorderColor="#2DE2E6"
+                                    BorderWidth="1"
+                                    CornerRadius="20"
+                                    HeightRequest="40" 
+                                    WidthRequest="40"
+                                    VerticalOptions="End"
+                                    Clicked="OnRemoveClicked"
+                                    CommandParameter="{Binding .}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+</ContentPage>  
