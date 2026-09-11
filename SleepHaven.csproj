@@ -3,18 +3,6 @@
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<OutputType>Exe</OutputType>
-
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
-
-		<!-- Note for MacCatalyst:
-		The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
-		When specifying both architectures, use the plural <RuntimeIdentifiers> instead of the singular <RuntimeIdentifier>.
-		The Mac App Store will NOT accept apps with ONLY maccatalyst-arm64 indicated;
-		either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
-		<!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
-
 		<OutputType>Exe</OutputType>
 		<RootNamespace>SleepHaven</RootNamespace>
 		<UseMaui>true</UseMaui>
@@ -51,7 +39,6 @@
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
 		
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
@@ -64,15 +51,8 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiXaml Update="ProductDetailPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="SearchPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
+		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
+		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" />
 	</ItemGroup>
 
 </Project>

@@ -2,16 +2,14 @@
 
 public partial class ProductDetailPage : ContentPage
 {
-    Product _currentProduct;
-    DatabaseService _databaseService;
+    private readonly Product _currentProduct;
+    private readonly DatabaseService _databaseService = new();
 
     public ProductDetailPage(Product product)
     {
         InitializeComponent();
 
         _currentProduct = product;
-        _databaseService = new DatabaseService();
-
         ProductImage.Source = product.ThumbnailUrl;
         NameLabel.Text = product.Name;
         PriceLabel.Text = product.Price;
@@ -20,15 +18,6 @@ public partial class ProductDetailPage : ContentPage
 
         UpdateFavoriteIcon();
 
-        Shell.Current.Navigated += async (sender, args) =>
-        {
-            var freshProduct = await _databaseService.GetProductByIdAsync(_currentProduct.Id);
-            if (freshProduct != null)
-            {
-                _currentProduct.IsFavorite = freshProduct.IsFavorite;
-                UpdateFavoriteIcon();
-            }
-        };
     }
 
     protected override async void OnAppearing()

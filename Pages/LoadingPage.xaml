@@ -19,7 +19,7 @@
            LineHeight="1.4"
            HorizontalOptions="Start" />
         <Label Text="find your sleep"
-           FontFamily="PlayfairDisplay"
+           FontFamily="OpenSansSemibold"
            FontSize="20"
            FontAttributes="Italic"
            TextColor="Black"

@@ -16,7 +16,7 @@
         </Rectangle>
 
         <VerticalStackLayout Padding="20,80,20,0" Spacing="5" VerticalOptions="Start" InputTransparent="False">
-            <Label Text="Find Comfort" FontFamily="PlayfairDisplay" FontSize="28" FontAttributes="Bold" TextColor="White" />
+            <Label Text="Find Comfort" FontFamily="OpenSansSemibold" FontSize="28" FontAttributes="Bold" TextColor="White" />
             <Label Text="Browse by category" FontSize="14" TextColor="#E0E0E0" Margin="0,0,0,5"/>
         </VerticalStackLayout>
 

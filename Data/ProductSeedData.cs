@@ -1,36 +1,12 @@
 ﻿using SQLite;
-using System.IO;
 
 namespace SleepHaven;
 
-/// Storage
-public class DatabaseService
+internal static class ProductSeedData
 {
-    // Declare a global static SQLite asynchronous connection object to ensure that the same database instance is shared throughout the entire application.
-    private static SQLiteAsyncConnection _database;
-
-    // The method for initializing the database
-    async Task Init()
-    {
-        // If the database has already been connected, simply skip this step to avoid redundant initialization.
-        if (_database is not null)
-            return;
-
-        // Define the absolute path of the database file in the device sandbox
-        var dbPath = Path.Combine(FileSystem.AppDataDirectory, "SleepHaven_v8.db3");
-
-        // Establish database connection
-        _database = new SQLiteAsyncConnection(dbPath);
-
-        // Based on the structure of the Product class, automatically create the table in the database.
-        await _database.CreateTableAsync<Product>();
-
-        // Check if the checklist is empty. If it is empty, insert the initial demonstration data.
-        var count = await _database.Table<Product>().CountAsync();
-        if (count == 0)
+    public static IReadOnlyList<Product> All { get; } =
+        new List<Product>
         {
-            var initialProducts = new List<Product>
-            {
                 // Spring Products
                 new Product
                 {
@@ -180,7 +156,7 @@ public class DatabaseService
                     Price = "$139.00",
                     Category = "Pillows - Spring",
                     Description = "High-performance racing seat-style memory pillow, revolutionizing the sleep experience of ordinary memory pillows Product selling points:\r\n1. The core is imported from Italy. The inner core is stamped with the Italian word \"ITALIA\" in steel. It is produced by the top Italian manufacturer of memory foam, \"TG\".\r\n2. Extremely soft and supportive, flexible support, head and neck relief, relaxation and deep sleep.\r\n3. Extremely breathable, with 1300 ventilation holes, full pillow ventilation, and efficient sweat removal.\r\n4. Super safe, in accordance with EU standards, odorless and hypoallergenic.\r\n(a. Certified by German TÜV Rheinland, the only threshold for products entering Germany!\r\n(b. Certified by the \"Environmental Oscar\" of the textile industry, Oeko-Tex Standard 100\r\n(c. CertiPUR, the \"green safety - gold standard certification\" for memory foam)\r\n5. Double-sided sleep sensation, one side is cool for sleep assistance, and the other side is warm and skin-friendly.",
-                    ThumbnailUrl = "restful_recovery_memory_pillow_foled.png",
+                    ThumbnailUrl = "restful_recovery_memory_pillow_folded.png",
                     LandscapeUrl = "restful_recovery_memory_pillow_bedroom.png",
                     IsFavorite = false
                 },
@@ -197,39 +173,5 @@ public class DatabaseService
                     LandscapeUrl = "bamboo_charcoal_mattress_bedroom.png",
                     IsFavorite = false
                 },
-            };
-            // Batch insertion of initial data
-            await _database.InsertAllAsync(initialProducts);
-        }
-    }
-
-    // The CRUD (Create, Read, Update, Delete) methods called from the external interface↓
-
-    // Retrieve all products (for use in loading the category page)
-    public async Task<List<Product>> GetAllProductsAsync()
-    {
-        await Init();
-        return await _database.Table<Product>().ToListAsync();
-    }
-
-    // Retrieve all the products that have been marked as favorites (with IsFavorite set to true)
-    public async Task<List<Product>> GetFavoriteProductsAsync()
-    {
-        await Init();
-        return await _database.Table<Product>().Where(p => p.IsFavorite).ToListAsync();
-    }
-
-    // Update product information
-    public async Task UpdateProductAsync(Product product)
-    {
-        await Init();
-        await _database.UpdateAsync(product);
-    }
-
-    // Search for a specific product based on its unique ID. 
-    public async Task<Product> GetProductByIdAsync(string id)
-    {
-        await Init();
-        return await _database.Table<Product>().FirstOrDefaultAsync(p => p.Id == id);
-    }
+        };
 }
