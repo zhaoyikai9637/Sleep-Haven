@@ -9,12 +9,8 @@
     Shell.NavBarIsVisible="False">
 
     <Grid RowDefinitions="Auto,Auto,*">
-        <Grid Grid.Row="0" Padding="24,18,24,8" ColumnDefinitions="*,Auto" ColumnSpacing="20">
-            <VerticalStackLayout Spacing="0">
-                <Label Text="SLEEP / HAVEN" Style="{StaticResource SignalLabelStyle}" />
-                <Label Text="Rest, edited." Style="{StaticResource PageTitleStyle}" />
-            </VerticalStackLayout>
-            <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+        <Grid Grid.Row="0" Padding="20,12,20,4">
+            <HorizontalStackLayout Spacing="6">
                 <Button x:Name="BtnSingapore" Text="Singapore" Style="{StaticResource PrimaryButtonStyle}" Clicked="OnSingaporeClicked" />
                 <Button x:Name="BtnQingdao" Text="Qingdao" Style="{StaticResource SecondaryButtonStyle}" Clicked="OnQingdaoClicked" />
             </HorizontalStackLayout>
