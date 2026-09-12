@@ -17,6 +17,9 @@ public partial class ProductDetailPage : ContentPage
         PriceLabel.Text = product.Price;
         CategoryLabel.Text = product.Category;
         DescLabel.Text = product.Description;
+        MaterialValueLabel.Text = InferMaterial(product);
+        SeasonValueLabel.Text = InferSeason(product.Category);
+        ProfileValueLabel.Text = InferProfile(product);
 
         UpdateFavoriteIcon();
 
@@ -90,7 +93,36 @@ public partial class ProductDetailPage : ContentPage
 
     private void UpdateFavoriteIcon()
     {
-        FavoriteToolbarItem.IconImageSource = _currentProduct.IsFavorite ? "collect_on.png" : "collect_off.png";
-        FavoriteToolbarItem.Text = _currentProduct.IsFavorite ? "Saved" : "Save";
+        SaveButton.Text = _currentProduct.IsFavorite ? "SAVED TO YOUR SLEEP EDIT" : "SAVE TO YOUR SLEEP EDIT";
+    }
+
+    private static string InferMaterial(Product product)
+    {
+        var text = $"{product.Name} {product.Description}";
+        if (text.Contains("silk", StringComparison.OrdinalIgnoreCase)) return "Silk";
+        if (text.Contains("tencel", StringComparison.OrdinalIgnoreCase)) return "Tencel blend";
+        if (text.Contains("bamboo", StringComparison.OrdinalIgnoreCase)) return "Bamboo blend";
+        if (text.Contains("cotton", StringComparison.OrdinalIgnoreCase)) return "Cotton";
+        if (text.Contains("memory", StringComparison.OrdinalIgnoreCase)) return "Memory foam";
+        return "Textile blend";
+    }
+
+    private static string InferSeason(string category)
+    {
+        foreach (var season in new[] { "Spring", "Summer", "Autumn", "Winter" })
+        {
+            if (category.Contains(season, StringComparison.OrdinalIgnoreCase)) return season;
+        }
+
+        return "All year";
+    }
+
+    private static string InferProfile(Product product)
+    {
+        var text = $"{product.Name} {product.Category}";
+        if (text.Contains("Pillow", StringComparison.OrdinalIgnoreCase) || text.Contains("Mattress", StringComparison.OrdinalIgnoreCase)) return "Supportive";
+        if (text.Contains("Summer", StringComparison.OrdinalIgnoreCase) || text.Contains("Silk", StringComparison.OrdinalIgnoreCase)) return "Cooling";
+        if (text.Contains("Winter", StringComparison.OrdinalIgnoreCase)) return "Warm";
+        return "Balanced";
     }
 }

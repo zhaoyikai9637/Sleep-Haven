@@ -7,14 +7,7 @@ public partial class LoadingPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-
-        if (MotionPreferences.AreAnimationsEnabled)
-        {
-            LoadingStatus.Opacity = 0.35;
-            await LoadingStatus.FadeToAsync(1, 420, Easing.CubicOut);
-        }
-
-        await Task.Delay(700);
+        await Task.Delay(3000);
 
         if (Application.Current?.Windows.FirstOrDefault() is { } window)
         {

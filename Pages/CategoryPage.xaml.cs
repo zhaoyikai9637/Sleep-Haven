@@ -48,6 +48,7 @@ public partial class CategoryPage : ContentPage
         var products = await _databaseService.GetAllProductsAsync();
         ReplaceItems(FilteredProducts, products.Where(product =>
             product.Category.Contains(category, StringComparison.OrdinalIgnoreCase)));
+        ResultCountLabel.Text = FilteredProducts.Count.ToString("00");
 
         var hasProducts = FilteredProducts.Count > 0;
         EmptyStateLabel.IsVisible = !hasProducts;
@@ -69,10 +70,10 @@ public partial class CategoryPage : ContentPage
     {
         var resources = Application.Current?.Resources;
         var isDark = Application.Current?.RequestedTheme == AppTheme.Dark;
-        var selectedBackground = (Color?)resources?["Accent"] ?? Color.FromArgb("#2F6B5F");
-        var selectedText = (Color?)resources?["OnAccent"] ?? Color.FromArgb("#F7FAF9");
-        var idleBackground = (Color?)resources?[isDark ? "DarkSurfaceMuted" : "LightSurfaceMuted"] ?? Color.FromArgb("#E6ECEA");
-        var idleText = (Color?)resources?[isDark ? "DarkTextSecondary" : "LightTextSecondary"] ?? Color.FromArgb("#586762");
+        var selectedBackground = (Color?)resources?["Accent"] ?? Color.FromArgb("#0878F9");
+        var selectedText = Colors.White;
+        var idleBackground = (Color?)resources?[isDark ? "DarkSurfaceMuted" : "AccentMist"] ?? Color.FromArgb("#DDF2FF");
+        var idleText = (Color?)resources?[isDark ? "AccentDark" : "AccentDeep"] ?? Color.FromArgb("#064A9B");
 
         foreach (var (category, button, label) in GetTabs())
         {

@@ -46,4 +46,10 @@ public sealed class SeasonSection : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
 
-public sealed record CarouselItem(string Id, string ImageUrl, string Title);
+public sealed record CarouselItem(
+    string Id,
+    string ImageUrl,
+    string Number,
+    string Eyebrow,
+    string Title,
+    string Summary);

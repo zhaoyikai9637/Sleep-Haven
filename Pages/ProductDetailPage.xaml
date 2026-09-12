@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
-    x:Class="SleepHaven.ProductDetailPage"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="Product detail"
-    Shell.TabBarIsVisible="True">
-
-    <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="FavoriteToolbarItem"
-                     Text="Save"
-                     IconImageSource="collect_off.png"
-                     Clicked="OnFavoriteClicked" />
-    </ContentPage.ToolbarItems>
-
+<ContentPage x:Class="SleepHaven.ProductDetailPage" xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" Title="Product detail" Shell.TabBarIsVisible="True">
     <Grid x:Name="ContentGrid">
-        <Border x:Name="ImageFrame"
-                StrokeThickness="0"
-                StrokeShape="RoundRectangle 16"
-                Margin="16">
+        <Grid x:Name="ImageFrame" Margin="0">
             <Image x:Name="ProductImage" Aspect="AspectFill" />
-        </Border>
-
+            <BoxView Color="#40061B36" />
+            <Border Padding="10,5" Margin="20" HorizontalOptions="Start" VerticalOptions="Start" StrokeThickness="0" BackgroundColor="#E60878F9">
+                <Label Text="SLEEPHAVEN / SELECTED" TextColor="White" FontFamily="OpenSansSemibold" FontSize="9" CharacterSpacing="1.5" />
+            </Border>
+        </Grid>
         <ScrollView x:Name="TextScrollView">
-            <VerticalStackLayout Padding="24,20,24,36" Spacing="14">
-                <Label x:Name="CategoryLabel" Style="{StaticResource CaptionStyle}" />
-                <Label x:Name="NameLabel" Style="{StaticResource DisplayTitleStyle}" />
-                <Label x:Name="PriceLabel" Style="{StaticResource PriceStyle}" FontSize="22" />
-
-                <BoxView HeightRequest="1"
-                         Margin="0,8"
-                         BackgroundColor="{AppThemeBinding Light={StaticResource LightStroke}, Dark={StaticResource DarkStroke}}" />
-
-                <Label Text="About this piece" Style="{StaticResource SectionTitleStyle}" />
-                <Label x:Name="DescLabel" Style="{StaticResource BodyStyle}" />
+            <VerticalStackLayout Spacing="0">
+                <Grid Padding="24,22" BackgroundColor="{StaticResource AccentDeep}">
+                    <BoxView Color="#2600B7FF" HeightRequest="230" WidthRequest="120" Rotation="-18" HorizontalOptions="End" TranslationX="45" />
+                    <VerticalStackLayout Spacing="9">
+                        <Label x:Name="CategoryLabel" TextColor="#9BD7FF" FontFamily="OpenSansSemibold" FontSize="10" CharacterSpacing="1.8" />
+                        <Label x:Name="NameLabel" TextColor="White" FontFamily="OpenSansSemibold" FontSize="30" LineHeight="1" />
+                        <Label x:Name="PriceLabel" TextColor="White" FontFamily="OpenSansSemibold" FontSize="22" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Grid Padding="22,17" ColumnDefinitions="*,1,*,1,*" ColumnSpacing="12" BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                    <VerticalStackLayout Spacing="2"><Label Text="MATERIAL" Style="{StaticResource SignalLabelStyle}" /><Label x:Name="MaterialValueLabel" Style="{StaticResource CaptionStyle}" /></VerticalStackLayout>
+                    <BoxView Grid.Column="1" Color="{AppThemeBinding Light={StaticResource LightStroke}, Dark={StaticResource DarkStroke}}" />
+                    <VerticalStackLayout Grid.Column="2" Spacing="2"><Label Text="SEASON" Style="{StaticResource SignalLabelStyle}" /><Label x:Name="SeasonValueLabel" Style="{StaticResource CaptionStyle}" /></VerticalStackLayout>
+                    <BoxView Grid.Column="3" Color="{AppThemeBinding Light={StaticResource LightStroke}, Dark={StaticResource DarkStroke}}" />
+                    <VerticalStackLayout Grid.Column="4" Spacing="2"><Label Text="PROFILE" Style="{StaticResource SignalLabelStyle}" /><Label x:Name="ProfileValueLabel" Style="{StaticResource CaptionStyle}" /></VerticalStackLayout>
+                </Grid>
+                <VerticalStackLayout Padding="24,24,24,34" Spacing="15">
+                    <Label Text="ABOUT / MATERIAL" Style="{StaticResource SignalLabelStyle}" />
+                    <Label Text="Designed around the way you rest." Style="{StaticResource SectionTitleStyle}" />
+                    <Label x:Name="DescLabel" Style="{StaticResource BodyStyle}" />
+                    <Button x:Name="SaveButton" Text="SAVE TO YOUR SLEEP EDIT" Style="{StaticResource PrimaryButtonStyle}" Margin="0,10,0,0" Clicked="OnFavoriteClicked" />
+                    <Grid Padding="0,13" ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Label Text="30" TextColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" FontFamily="OpenSansSemibold" FontSize="28" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center"><Label Text="NIGHT COMFORT PROMISE" Style="{StaticResource SignalLabelStyle}" /><Label Text="Take time to decide if the feel is right." Style="{StaticResource CaptionStyle}" /></VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
             </VerticalStackLayout>
         </ScrollView>
     </Grid>

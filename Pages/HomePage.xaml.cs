@@ -6,15 +6,14 @@ public partial class HomePage : ContentPage
 {
     private readonly DatabaseService _databaseService = new();
     private readonly WeatherService _weatherService = new(new HttpClient());
-    private IDispatcherTimer? _carouselTimer;
     private bool _isFirstLoad = true;
     private bool _hasAnimated;
 
     public ObservableCollection<CarouselItem> CarouselItems { get; } =
     [
-        new("p012", "restful_recovery_memory_pillow_bedroom.png", "Restful Recovery Memory Pillow"),
-        new("p007", "mulberrysilk_summerquilt_bedroom.png", "Mulberry Silk Summer Quilt"),
-        new("p003", "tencelcotton_abdual_use_bedroom.png", "Tencel Cotton Bedding Set")
+        new("p012", "restful_recovery_memory_pillow_bedroom.png", "01", "SUPPORT / RECOVERY", "Restful Recovery Memory Pillow", "Pressure-aware support for slower, deeper nights."),
+        new("p007", "mulberrysilk_summerquilt_bedroom.png", "02", "LIGHT / BREATHABLE", "Mulberry Silk Summer Quilt", "A weightless layer selected for warm, humid air."),
+        new("p003", "tencelcotton_abdual_use_bedroom.png", "03", "SOFT / ADAPTABLE", "Tencel Cotton Bedding Set", "Two-sided comfort with a cool, fluid hand feel.")
     ];
 
     public ObservableCollection<Product> SearchSuggestions { get; } = [];
@@ -42,14 +41,7 @@ public partial class HomePage : ContentPage
             await FetchWeatherAndRecommendAsync("Singapore");
         }
 
-        StartCarousel();
         await AnimateEntryAsync();
-    }
-
-    protected override void OnDisappearing()
-    {
-        base.OnDisappearing();
-        _carouselTimer?.Stop();
     }
 
     private async Task LoadSeasonSectionsAsync()
@@ -65,14 +57,8 @@ public partial class HomePage : ContentPage
 
         foreach (var definition in definitions)
         {
-            var matches = products.Where(product =>
-                product.Category.Contains(definition.Key, StringComparison.OrdinalIgnoreCase));
-            SeasonSections.Add(new SeasonSection(
-                definition.Key,
-                definition.Title,
-                definition.Summary,
-                matches,
-                definition.Key == "Spring"));
+            var matches = products.Where(product => product.Category.Contains(definition.Key, StringComparison.OrdinalIgnoreCase));
+            SeasonSections.Add(new SeasonSection(definition.Key, definition.Title, definition.Summary, matches, definition.Key == "Spring"));
         }
 
         SeasonLoadingState.IsVisible = false;
@@ -88,41 +74,18 @@ public partial class HomePage : ContentPage
 
         _hasAnimated = true;
         HomeContent.Opacity = 0;
-        HomeContent.TranslationY = 12;
-        await Task.WhenAll(
-            HomeContent.FadeToAsync(1, 280, Easing.CubicOut),
-            HomeContent.TranslateToAsync(0, 0, 280, Easing.CubicOut));
+        HomeContent.TranslationY = 10;
+        await Task.WhenAll(HomeContent.FadeToAsync(1, 260, Easing.CubicOut), HomeContent.TranslateToAsync(0, 0, 260, Easing.CubicOut));
     }
 
-    private void StartCarousel()
+    private void OnPreviousHeroClicked(object sender, EventArgs e)
     {
-        if (!MotionPreferences.AreAnimationsEnabled)
-        {
-            return;
-        }
-
-        _carouselTimer ??= CreateCarouselTimer();
-        if (!_carouselTimer.IsRunning)
-        {
-            _carouselTimer.Start();
-        }
+        BannerCarousel.Position = BannerCarousel.Position <= 0 ? CarouselItems.Count - 1 : BannerCarousel.Position - 1;
     }
 
-    private IDispatcherTimer CreateCarouselTimer()
+    private void OnNextHeroClicked(object sender, EventArgs e)
     {
-        var timer = Dispatcher.CreateTimer();
-        timer.Interval = TimeSpan.FromSeconds(4.5);
-        timer.Tick += (_, _) =>
-        {
-            if (CarouselItems.Count == 0)
-            {
-                return;
-            }
-
-            var nextIndex = (BannerCarousel.Position + 1) % CarouselItems.Count;
-            BannerCarousel.ScrollTo(nextIndex, animate: true);
-        };
-        return timer;
+        BannerCarousel.Position = (BannerCarousel.Position + 1) % CarouselItems.Count;
     }
 
     private async void OnSearchBarTextChanged(object sender, TextChangedEventArgs e)
@@ -136,7 +99,8 @@ public partial class HomePage : ContentPage
 
         var products = await _databaseService.GetAllProductsAsync();
         ReplaceItems(SearchSuggestions, products.Where(product =>
-            product.Name.Trim(' ', '"', '\'').StartsWith(query, StringComparison.OrdinalIgnoreCase)));
+            product.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+            product.Description.Contains(query, StringComparison.OrdinalIgnoreCase)));
 
         SearchSuggestionsOverlay.IsVisible = true;
         MainContentScrollView.IsVisible = false;
@@ -208,18 +172,18 @@ public partial class HomePage : ContentPage
         var resources = Application.Current?.Resources;
         var isDark = Application.Current?.RequestedTheme == AppTheme.Dark;
         button.BackgroundColor = selected
-            ? (Color?)resources?["Accent"] ?? Color.FromArgb("#2F6B5F")
-            : (Color?)resources?[isDark ? "DarkSurfaceMuted" : "LightSurfaceMuted"] ?? Color.FromArgb("#E6ECEA");
+            ? (Color?)resources?["Accent"] ?? Color.FromArgb("#0878F9")
+            : (Color?)resources?[isDark ? "DarkSurfaceMuted" : "AccentMist"] ?? Color.FromArgb("#DDF2FF");
         button.TextColor = selected
-            ? (Color?)resources?["OnAccent"] ?? Color.FromArgb("#F7FAF9")
-            : (Color?)resources?[isDark ? "DarkTextSecondary" : "LightTextSecondary"] ?? Color.FromArgb("#586762");
+            ? Colors.White
+            : (Color?)resources?[isDark ? "AccentDark" : "AccentDeep"] ?? Color.FromArgb("#064A9B");
     }
 
     private async Task FetchWeatherAndRecommendAsync(string cityName)
     {
         WeatherRecommendationCard.IsVisible = true;
-        WeatherTitleLabel.Text = $"Checking {cityName} weather";
-        WeatherBodyLabel.Text = "Selecting a comfortable seasonal match.";
+        WeatherTitleLabel.Text = $"Reading {cityName}'s night";
+        WeatherBodyLabel.Text = "Selecting a comfortable material profile.";
 
         try
         {
@@ -228,8 +192,8 @@ public partial class HomePage : ContentPage
         }
         catch
         {
-            WeatherTitleLabel.Text = "Weather is unavailable";
-            WeatherBodyLabel.Text = "You can still explore every seasonal collection below.";
+            WeatherTitleLabel.Text = "Weather signal unavailable";
+            WeatherBodyLabel.Text = "Every seasonal edit remains available below.";
         }
     }
 
@@ -241,13 +205,13 @@ public partial class HomePage : ContentPage
             season.IsExpanded = season.Key == targetSeason;
         }
 
-        WeatherTitleLabel.Text = $"{weather.CityName}, {weather.Temperature:F1}°C";
+        WeatherTitleLabel.Text = $"{weather.CityName} / {weather.Temperature:F1}°C";
         WeatherBodyLabel.Text = targetSeason switch
         {
-            "Summer" => $"Humidity is {weather.Humidity}%. Start with light, breathable layers.",
-            "Autumn" => "Rain is in the forecast. Start with balanced, cosy layers.",
-            "Winter" => "The air is cold. Start with insulating quilts and bedding.",
-            _ => "The weather is mild. Start with breathable spring layers."
+            "Summer" => $"Humidity is {weather.Humidity}%. Begin with light, breathable layers.",
+            "Autumn" => "Rain is in the forecast. Begin with balanced, cosy layers.",
+            "Winter" => "The air is cold. Begin with insulating quilts and bedding.",
+            _ => "The weather is mild. Begin with breathable spring layers."
         };
     }
 

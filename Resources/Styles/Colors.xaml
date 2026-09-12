@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-
-    <Color x:Key="Accent">#2F6B5F</Color>
-    <Color x:Key="AccentDark">#8AC1B1</Color>
-    <Color x:Key="OnAccent">#F7FAF9</Color>
-    <Color x:Key="LightBackground">#F2F5F4</Color>
-    <Color x:Key="DarkBackground">#0E1413</Color>
-    <Color x:Key="LightSurface">#FBFCFC</Color>
-    <Color x:Key="DarkSurface">#17201E</Color>
-    <Color x:Key="LightSurfaceMuted">#E6ECEA</Color>
-    <Color x:Key="DarkSurfaceMuted">#202C29</Color>
-    <Color x:Key="LightTextPrimary">#17201E</Color>
-    <Color x:Key="DarkTextPrimary">#EDF3F1</Color>
-    <Color x:Key="LightTextSecondary">#586762</Color>
-    <Color x:Key="DarkTextSecondary">#A9B8B3</Color>
-    <Color x:Key="LightStroke">#D3DEDA</Color>
-    <Color x:Key="DarkStroke">#30413D</Color>
-    <Color x:Key="Danger">#A54848</Color>
-    <Color x:Key="White">#FDFEFE</Color>
-    <Color x:Key="Black">#101514</Color>
-
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <!-- One blue family: water, night, and clear urban light. -->
+    <Color x:Key="Accent">#0878F9</Color>
+    <Color x:Key="AccentDark">#62B6FF</Color>
+    <Color x:Key="AccentDeep">#064A9B</Color>
+    <Color x:Key="AccentInk">#061B36</Color>
+    <Color x:Key="AccentMist">#DDF2FF</Color>
+    <Color x:Key="OnAccent">#FFFFFF</Color>
+    <Color x:Key="LightBackground">#F3F8FC</Color>
+    <Color x:Key="DarkBackground">#041221</Color>
+    <Color x:Key="LightSurface">#FFFFFF</Color>
+    <Color x:Key="DarkSurface">#0A223C</Color>
+    <Color x:Key="LightSurfaceMuted">#E4F1FA</Color>
+    <Color x:Key="DarkSurfaceMuted">#103153</Color>
+    <Color x:Key="LightTextPrimary">#071A31</Color>
+    <Color x:Key="DarkTextPrimary">#F2F8FC</Color>
+    <Color x:Key="LightTextSecondary">#50677C</Color>
+    <Color x:Key="DarkTextSecondary">#A7C0D5</Color>
+    <Color x:Key="LightStroke">#BBD4E7</Color>
+    <Color x:Key="DarkStroke">#28527A</Color>
+    <Color x:Key="Danger">#B43B57</Color>
+    <Color x:Key="White">#FFFFFF</Color>
+    <Color x:Key="Black">#030C16</Color>
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}" />
     <SolidColorBrush x:Key="AccentDarkBrush" Color="{StaticResource AccentDark}" />
 </ResourceDictionary>

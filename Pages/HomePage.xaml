@@ -8,141 +8,131 @@
     Title="Home"
     Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="Auto,Auto,*">
-        <Grid Grid.Row="0" Padding="24,20,24,8" ColumnDefinitions="*,Auto" ColumnSpacing="16">
-            <VerticalStackLayout Spacing="2">
-                <Label Text="SleepHaven" Style="{StaticResource PageTitleStyle}" />
-                <Label Text="Comfort selected for the way you rest." Style="{StaticResource CaptionStyle}" />
-            </VerticalStackLayout>
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
+        <Grid Grid.Row="0" BackgroundColor="{StaticResource AccentInk}" Padding="20,8" ColumnDefinitions="*,Auto">
+            <Label Text="COMPLIMENTARY DELIVERY OVER $499" TextColor="#DDF2FF" FontFamily="OpenSansSemibold" FontSize="10" CharacterSpacing="1.3" />
+            <Label Grid.Column="1" Text="30-NIGHT COMFORT PROMISE" TextColor="White" FontFamily="OpenSansSemibold" FontSize="10" CharacterSpacing="1.1" />
+        </Grid>
 
-            <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
-                <Button x:Name="BtnSingapore"
-                        Text="Singapore"
-                        Style="{StaticResource PrimaryButtonStyle}"
-                        Clicked="OnSingaporeClicked" />
-                <Button x:Name="BtnQingdao"
-                        Text="Qingdao"
-                        Style="{StaticResource SecondaryButtonStyle}"
-                        Clicked="OnQingdaoClicked" />
+        <Grid Grid.Row="1" Padding="24,18,24,8" ColumnDefinitions="*,Auto" ColumnSpacing="20">
+            <VerticalStackLayout Spacing="0">
+                <Label Text="SLEEP / HAVEN" Style="{StaticResource SignalLabelStyle}" />
+                <Label Text="Rest, edited." Style="{StaticResource PageTitleStyle}" />
+            </VerticalStackLayout>
+            <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                <Button x:Name="BtnSingapore" Text="Singapore" Style="{StaticResource PrimaryButtonStyle}" Clicked="OnSingaporeClicked" />
+                <Button x:Name="BtnQingdao" Text="Qingdao" Style="{StaticResource SecondaryButtonStyle}" Clicked="OnQingdaoClicked" />
             </HorizontalStackLayout>
         </Grid>
 
-        <SearchBar x:Name="MainSearchBar"
-                   Grid.Row="1"
-                   Margin="20,8,20,14"
-                   Placeholder="Search bedding, quilts, pillows"
-                   TextChanged="OnSearchBarTextChanged"
-                   SearchButtonPressed="OnSearchButtonPressed" />
+        <SearchBar x:Name="MainSearchBar" Grid.Row="2" Margin="20,8,20,14" Placeholder="Search by material, feel, or season" TextChanged="OnSearchBarTextChanged" SearchButtonPressed="OnSearchButtonPressed" />
 
-        <ScrollView x:Name="MainContentScrollView" Grid.Row="2">
-            <VerticalStackLayout x:Name="HomeContent" Padding="20,0,20,28" Spacing="24">
-                <Border Style="{StaticResource CardStyle}" Padding="0">
-                    <Grid>
-                        <CarouselView x:Name="BannerCarousel"
-                                      HeightRequest="260"
-                                      IndicatorView="HeroIndicator"
-                                      ItemsSource="{Binding CarouselItems}"
-                                      Loop="True">
-                            <CarouselView.ItemTemplate>
-                                <DataTemplate x:DataType="local:CarouselItem">
-                                    <Grid HeightRequest="260">
-                                        <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="{Binding Id}" />
-                                        </Grid.GestureRecognizers>
-                                        <Image Source="{Binding ImageUrl}"
-                                               Aspect="AspectFill"
-                                               SemanticProperties.Description="{Binding Title}" />
-                                        <BoxView VerticalOptions="End" HeightRequest="92">
-                                            <BoxView.Background>
-                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                    <GradientStop Color="#00101514" Offset="0" />
-                                                    <GradientStop Color="#D9101514" Offset="1" />
-                                                </LinearGradientBrush>
-                                            </BoxView.Background>
-                                        </BoxView>
-                                        <Label Text="{Binding Title}"
-                                               Margin="20,0,64,18"
-                                               VerticalOptions="End"
-                                               FontFamily="OpenSansSemibold"
-                                               FontSize="18"
-                                               TextColor="#F7FAF9"
-                                               MaxLines="2" />
+        <ScrollView x:Name="MainContentScrollView" Grid.Row="3">
+            <VerticalStackLayout x:Name="HomeContent" Spacing="0">
+                <Grid HeightRequest="320" BackgroundColor="{StaticResource AccentInk}">
+                    <CarouselView x:Name="BannerCarousel" ItemsSource="{Binding CarouselItems}" IndicatorView="HeroIndicator" Loop="False" IsBounceEnabled="False">
+                        <CarouselView.ItemTemplate>
+                            <DataTemplate x:DataType="local:CarouselItem">
+                                <Grid>
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="{Binding Id}" />
+                                    </Grid.GestureRecognizers>
+                                    <Image Source="{Binding ImageUrl}" Aspect="AspectFill" SemanticProperties.Description="{Binding Title}" />
+                                    <BoxView Color="#A9061B36" />
+                                    <BoxView BackgroundColor="#BA0878F9" WidthRequest="360" HeightRequest="470" HorizontalOptions="Start" TranslationX="-160" Rotation="-13" />
+                                    <Grid Padding="26,24" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
+                                        <HorizontalStackLayout Spacing="12">
+                                            <Label Text="{Binding Number}" TextColor="#DDF2FF" FontFamily="OpenSansSemibold" FontSize="28" />
+                                            <BoxView WidthRequest="46" HeightRequest="2" Color="#DDF2FF" VerticalOptions="Center" />
+                                            <Label Text="{Binding Eyebrow}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.6" VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+                                        <VerticalStackLayout Grid.Row="2" Spacing="8" WidthRequest="330" HorizontalOptions="Start">
+                                            <Label Text="{Binding Title}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="30" LineHeight="1" MaxLines="2" />
+                                            <Label Text="{Binding Summary}" TextColor="#DDF2FF" FontSize="14" MaxLines="2" />
+                                            <Label Text="VIEW THE EDIT  /" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.4" Margin="0,5,0,0" />
+                                        </VerticalStackLayout>
                                     </Grid>
-                                </DataTemplate>
-                            </CarouselView.ItemTemplate>
-                        </CarouselView>
-                        <IndicatorView x:Name="HeroIndicator"
-                                       Margin="0,0,18,20"
-                                       HorizontalOptions="End"
-                                       VerticalOptions="End" />
-                    </Grid>
-                </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </CarouselView.ItemTemplate>
+                    </CarouselView>
 
-                <Border x:Name="WeatherRecommendationCard"
-                        Style="{StaticResource FlatSurfaceStyle}"
-                        Padding="18"
-                        IsVisible="False">
-                    <Grid ColumnDefinitions="5,*" ColumnSpacing="14">
-                        <BoxView BackgroundColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}"
-                                 CornerRadius="3" />
-                        <VerticalStackLayout Grid.Column="1" Spacing="4">
-                            <Label x:Name="WeatherTitleLabel" Style="{StaticResource ProductNameStyle}" />
-                            <Label x:Name="WeatherBodyLabel" Style="{StaticResource BodyStyle}" />
+                    <HorizontalStackLayout Margin="0,0,22,20" Spacing="6" HorizontalOptions="End" VerticalOptions="End">
+                        <Button Text="PREV" Style="{StaticResource HeroNavButtonStyle}" FontSize="10" Clicked="OnPreviousHeroClicked" />
+                        <Button Text="NEXT" Style="{StaticResource HeroNavButtonStyle}" FontSize="10" Clicked="OnNextHeroClicked" />
+                    </HorizontalStackLayout>
+                    <IndicatorView x:Name="HeroIndicator" Margin="26,0,0,22" HorizontalOptions="Start" VerticalOptions="End" />
+                </Grid>
+
+                <Grid Padding="24,16" ColumnDefinitions="*,1,*,1,*" ColumnSpacing="14" BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="01 / MATERIAL" Style="{StaticResource SignalLabelStyle}" />
+                        <Label Text="Natural fibres" Style="{StaticResource CaptionStyle}" />
+                    </VerticalStackLayout>
+                    <BoxView Grid.Column="1" Color="{AppThemeBinding Light={StaticResource LightStroke}, Dark={StaticResource DarkStroke}}" />
+                    <VerticalStackLayout Grid.Column="2" Spacing="2">
+                        <Label Text="02 / EDIT" Style="{StaticResource SignalLabelStyle}" />
+                        <Label Text="Season matched" Style="{StaticResource CaptionStyle}" />
+                    </VerticalStackLayout>
+                    <BoxView Grid.Column="3" Color="{AppThemeBinding Light={StaticResource LightStroke}, Dark={StaticResource DarkStroke}}" />
+                    <VerticalStackLayout Grid.Column="4" Spacing="2">
+                        <Label Text="03 / SAVE" Style="{StaticResource SignalLabelStyle}" />
+                        <Label Text="Your shortlist" Style="{StaticResource CaptionStyle}" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <Border x:Name="WeatherRecommendationCard" Margin="20,24,20,0" Padding="22" StrokeThickness="0" BackgroundColor="{StaticResource AccentDeep}" IsVisible="False">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="18">
+                        <Label Text="NOW" TextColor="#72C5FF" FontFamily="OpenSansSemibold" FontSize="12" CharacterSpacing="1.8" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="5">
+                            <Label x:Name="WeatherTitleLabel" TextColor="White" FontFamily="OpenSansSemibold" FontSize="19" />
+                            <Label x:Name="WeatherBodyLabel" TextColor="#DDF2FF" FontSize="14" LineHeight="1.35" />
                         </VerticalStackLayout>
                     </Grid>
                 </Border>
 
-                <VerticalStackLayout Spacing="4">
-                    <Label Text="Seasonal comfort" Style="{StaticResource SectionTitleStyle}" />
-                    <Label Text="Open a season to browse the complete edit." Style="{StaticResource BodyStyle}" />
+                <Grid Margin="24,34,24,16" ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                    <Label Text="04" TextColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" FontFamily="OpenSansSemibold" FontSize="36" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                        <Label Text="SEASONAL EDITS" Style="{StaticResource SignalLabelStyle}" />
+                        <Label Text="Comfort changes with the air." Style="{StaticResource SectionTitleStyle}" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <VerticalStackLayout x:Name="SeasonLoadingState" Margin="20,0" Spacing="8">
+                    <BoxView HeightRequest="64" Color="{AppThemeBinding Light={StaticResource LightSurfaceMuted}, Dark={StaticResource DarkSurfaceMuted}}" />
+                    <BoxView HeightRequest="64" Color="{AppThemeBinding Light={StaticResource LightSurfaceMuted}, Dark={StaticResource DarkSurfaceMuted}}" />
                 </VerticalStackLayout>
 
-                <VerticalStackLayout x:Name="SeasonLoadingState" Spacing="12">
-                    <Border Style="{StaticResource FlatSurfaceStyle}" HeightRequest="74" />
-                    <Border Style="{StaticResource FlatSurfaceStyle}" HeightRequest="74" />
-                </VerticalStackLayout>
-
-                <VerticalStackLayout x:Name="SeasonSectionsLayout"
-                                     Spacing="12"
-                                     IsVisible="False"
-                                     BindableLayout.ItemsSource="{Binding SeasonSections}">
+                <VerticalStackLayout x:Name="SeasonSectionsLayout" Margin="20,0,20,32" Spacing="8" IsVisible="False" BindableLayout.ItemsSource="{Binding SeasonSections}">
                     <BindableLayout.ItemTemplate>
                         <DataTemplate x:DataType="local:SeasonSection">
-                            <Border Style="{StaticResource FlatSurfaceStyle}" Padding="0">
+                            <Border Style="{StaticResource CardStyle}" Padding="0">
                                 <VerticalStackLayout Spacing="0">
-                                    <Grid Padding="18,16" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                    <Grid Padding="18,14" ColumnDefinitions="6,*,Auto" ColumnSpacing="14">
                                         <Grid.GestureRecognizers>
                                             <TapGestureRecognizer Tapped="OnSeasonTapped" CommandParameter="{Binding .}" />
                                         </Grid.GestureRecognizers>
-                                        <VerticalStackLayout Spacing="2">
+                                        <BoxView Color="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                            <Label Text="{Binding Key, StringFormat='EDIT / {0}'}" Style="{StaticResource SignalLabelStyle}" />
                                             <Label Text="{Binding Title}" Style="{StaticResource ProductNameStyle}" />
                                             <Label Text="{Binding Summary}" Style="{StaticResource CaptionStyle}" />
                                         </VerticalStackLayout>
-                                        <Label Grid.Column="1"
-                                               Text="{Binding ToggleSymbol}"
-                                               FontSize="17"
-                                               TextColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}"
-                                               VerticalOptions="Center" />
+                                        <Label Grid.Column="2" Text="{Binding ToggleSymbol}" FontFamily="OpenSansSemibold" FontSize="22" TextColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" VerticalOptions="Center" />
                                     </Grid>
 
-                                    <VerticalStackLayout IsVisible="{Binding IsExpanded}"
-                                                         Padding="12,0,12,12"
-                                                         Spacing="10"
-                                                         BindableLayout.ItemsSource="{Binding Products}">
+                                    <VerticalStackLayout IsVisible="{Binding IsExpanded}" Padding="18,4,18,16" Spacing="0" BindableLayout.ItemsSource="{Binding Products}">
                                         <BindableLayout.ItemTemplate>
                                             <DataTemplate x:DataType="local:Product">
-                                                <Grid Padding="6" ColumnDefinitions="92,*" ColumnSpacing="14">
+                                                <Grid Padding="0,12" ColumnDefinitions="104,*" ColumnSpacing="16">
                                                     <Grid.GestureRecognizers>
                                                         <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="{Binding Id}" />
                                                     </Grid.GestureRecognizers>
-                                                    <Border StrokeThickness="0" StrokeShape="RoundRectangle 14" HeightRequest="92">
-                                                        <Image Source="{Binding ThumbnailUrl}"
-                                                               Aspect="AspectFill"
-                                                               SemanticProperties.Description="{Binding Name}" />
-                                                    </Border>
+                                                    <Image Source="{Binding ThumbnailUrl}" HeightRequest="92" Aspect="AspectFill" SemanticProperties.Description="{Binding Name}" />
                                                     <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                                        <Label Text="{Binding Category}" Style="{StaticResource SignalLabelStyle}" />
                                                         <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" />
-                                                        <Label Text="{Binding Category}" Style="{StaticResource CaptionStyle}" />
                                                         <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
                                                     </VerticalStackLayout>
                                                 </Grid>
@@ -157,33 +147,24 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <Grid x:Name="SearchSuggestionsOverlay"
-              Grid.Row="2"
-              Padding="20,4,20,20"
-              IsVisible="False"
-              BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
-            <CollectionView x:Name="SuggestionsCollectionView"
-                            SelectionMode="Single"
-                            SelectionChanged="OnSuggestionSelected">
+        <Grid x:Name="SearchSuggestionsOverlay" Grid.Row="3" Padding="20,4,20,20" IsVisible="False" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+            <CollectionView x:Name="SuggestionsCollectionView" SelectionMode="Single" SelectionChanged="OnSuggestionSelected">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:Product">
-                        <Grid Padding="4,10" ColumnDefinitions="64,*" ColumnSpacing="14">
-                            <Border StrokeThickness="0" StrokeShape="RoundRectangle 14" HeightRequest="64" WidthRequest="64">
-                                <Image Source="{Binding ThumbnailUrl}"
-                                       Aspect="AspectFill"
-                                       SemanticProperties.Description="{Binding Name}" />
-                            </Border>
+                        <Grid Padding="2,11" ColumnDefinitions="72,*" ColumnSpacing="16">
+                            <Image Source="{Binding ThumbnailUrl}" HeightRequest="72" Aspect="AspectFill" SemanticProperties.Description="{Binding Name}" />
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
+                                <Label Text="{Binding Category}" Style="{StaticResource SignalLabelStyle}" />
                                 <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" MaxLines="1" />
-                                <Label Text="{Binding Category}" Style="{StaticResource CaptionStyle}" />
+                                <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
                             </VerticalStackLayout>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
                 <CollectionView.EmptyView>
                     <VerticalStackLayout Padding="24" Spacing="6" VerticalOptions="Center">
-                        <Label Text="No close matches" Style="{StaticResource SectionTitleStyle}" HorizontalTextAlignment="Center" />
-                        <Label Text="Try a product type, material, or season." Style="{StaticResource BodyStyle}" HorizontalTextAlignment="Center" />
+                        <Label Text="NO MATCH / 00" Style="{StaticResource SignalLabelStyle}" HorizontalTextAlignment="Center" />
+                        <Label Text="Try a material, product type, or season." Style="{StaticResource BodyStyle}" HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
                 </CollectionView.EmptyView>
             </CollectionView>

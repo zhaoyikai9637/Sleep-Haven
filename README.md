@@ -24,3 +24,5 @@ dotnet build SleepHaven.csproj -f net10.0-windows10.0.19041.0 --no-restore
 ```
 
 Weather recommendations use Open-Meteo and do not require an API key.
+
+The current visual and commerce rationale is documented in [docs/DESIGN_RESEARCH.md](docs/DESIGN_RESEARCH.md).

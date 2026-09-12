@@ -1,67 +1,42 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
-    x:Class="SleepHaven.CollectionPage"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SleepHaven"
-    Title="Saved"
-    Shell.NavBarIsVisible="False">
-
+<ContentPage x:Class="SleepHaven.CollectionPage" xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:SleepHaven" Title="Saved" Shell.NavBarIsVisible="False">
     <Grid RowDefinitions="Auto,*">
-        <VerticalStackLayout Padding="24,20,24,16" Spacing="4">
-            <Label Text="Saved for later" Style="{StaticResource PageTitleStyle}" />
-            <Label Text="A quiet shortlist of the pieces you want to revisit." Style="{StaticResource BodyStyle}" />
-        </VerticalStackLayout>
-
-        <CollectionView x:Name="FavoritesCollectionView"
-                        Grid.Row="1"
-                        Margin="20,0,20,24"
-                        SelectionMode="Single"
-                        SelectionChanged="OnProductSelected">
+        <Grid HeightRequest="148" Padding="24,22" BackgroundColor="{StaticResource AccentInk}">
+            <BoxView Color="#260878F9" HeightRequest="260" WidthRequest="180" Rotation="19" HorizontalOptions="End" TranslationX="58" />
+            <VerticalStackLayout VerticalOptions="End" Spacing="5">
+                <Label Text="SAVED / 03" TextColor="#72C5FF" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.8" />
+                <Label Text="Your quiet shortlist." TextColor="White" FontFamily="OpenSansSemibold" FontSize="30" />
+            </VerticalStackLayout>
+        </Grid>
+        <CollectionView x:Name="FavoritesCollectionView" Grid.Row="1" Margin="20,18,20,24" SelectionMode="Single" SelectionChanged="OnProductSelected">
+            <CollectionView.Header>
+                <Grid Padding="0,0,0,12" ColumnDefinitions="*,Auto">
+                    <Label Text="KEEP CLOSE" Style="{StaticResource SignalLabelStyle}" />
+                    <Label Grid.Column="1" Text="TAP A PIECE TO REVISIT" Style="{StaticResource CaptionStyle}" />
+                </Grid>
+            </CollectionView.Header>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="local:Product">
-                    <Border Style="{StaticResource FlatSurfaceStyle}" Padding="10" Margin="0,0,0,10">
-                        <Grid ColumnDefinitions="96,*,Auto" ColumnSpacing="14">
-                            <Border StrokeThickness="0" StrokeShape="RoundRectangle 14" HeightRequest="96">
-                                <Image Source="{Binding ThumbnailUrl}"
-                                       Aspect="AspectFill"
-                                       SemanticProperties.Description="{Binding Name}" />
-                            </Border>
-                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
-                                <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" />
-                                <Label Text="{Binding Category}" Style="{StaticResource CaptionStyle}" />
-                                <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
-                            </VerticalStackLayout>
-                            <Button Grid.Column="2"
-                                    Text="Remove"
-                                    Style="{StaticResource SecondaryButtonStyle}"
-                                    Padding="14,8"
-                                    VerticalOptions="Center"
-                                    Clicked="OnRemoveClicked"
-                                    CommandParameter="{Binding .}" />
-                        </Grid>
-                    </Border>
+                    <Grid Padding="0,0,0,14" Margin="0,0,0,14" ColumnDefinitions="112,*,Auto" ColumnSpacing="16">
+                        <Image Source="{Binding ThumbnailUrl}" HeightRequest="104" Aspect="AspectFill" SemanticProperties.Description="{Binding Name}" />
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                            <Label Text="{Binding Category}" Style="{StaticResource SignalLabelStyle}" />
+                            <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" />
+                            <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="2" Text="REMOVE" Style="{StaticResource SecondaryButtonStyle}" Padding="12,8" VerticalOptions="Center" Clicked="OnRemoveClicked" CommandParameter="{Binding .}" />
+                        <BoxView Grid.ColumnSpan="3" HeightRequest="1" VerticalOptions="End" Color="{AppThemeBinding Light={StaticResource LightStroke}, Dark={StaticResource DarkStroke}}" />
+                    </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-        <VerticalStackLayout x:Name="EmptyStateLabel"
-                             Grid.Row="1"
-                             IsVisible="False"
-                             VerticalOptions="Center"
-                             Padding="32"
-                             Spacing="8">
-            <Border Style="{StaticResource FlatSurfaceStyle}"
-                    HeightRequest="88"
-                    WidthRequest="88"
-                    Padding="20"
-                    HorizontalOptions="Center">
-                <Image Source="collect_off.png"
-                       Aspect="AspectFit"
-                       SemanticProperties.Description="Empty saved list" />
-            </Border>
-            <Label Text="Your shortlist is empty" Style="{StaticResource SectionTitleStyle}" HorizontalTextAlignment="Center" Margin="0,10,0,0" />
-            <Label Text="Save a product from its detail page and it will appear here." Style="{StaticResource BodyStyle}" HorizontalTextAlignment="Center" />
-        </VerticalStackLayout>
+        <Grid x:Name="EmptyStateLabel" Grid.Row="1" IsVisible="False" Padding="30">
+            <BoxView Color="{AppThemeBinding Light={StaticResource AccentMist}, Dark={StaticResource DarkSurfaceMuted}}" WidthRequest="210" HeightRequest="300" Rotation="-12" HorizontalOptions="Center" />
+            <VerticalStackLayout VerticalOptions="Center" Spacing="8">
+                <Label Text="00" TextColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" FontFamily="OpenSansSemibold" FontSize="64" HorizontalTextAlignment="Center" />
+                <Label Text="Nothing saved yet." Style="{StaticResource SectionTitleStyle}" HorizontalTextAlignment="Center" />
+                <Label Text="Save a piece from its detail page to build your personal sleep edit." Style="{StaticResource BodyStyle}" HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </Grid>
     </Grid>
 </ContentPage>

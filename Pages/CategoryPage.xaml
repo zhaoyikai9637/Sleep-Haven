@@ -1,86 +1,51 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
-    x:Class="SleepHaven.CategoryPage"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SleepHaven"
-    Title="Category"
-    Shell.NavBarIsVisible="False">
-
+<ContentPage x:Class="SleepHaven.CategoryPage" xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:SleepHaven" Title="Shop" Shell.NavBarIsVisible="False">
     <Grid RowDefinitions="Auto,Auto,*">
-        <VerticalStackLayout Grid.Row="0" Padding="24,20,24,10" Spacing="4">
-            <Label Text="Find your comfort" Style="{StaticResource PageTitleStyle}" />
-            <Label Text="Browse by product type and compare at a glance." Style="{StaticResource BodyStyle}" />
-        </VerticalStackLayout>
-
-        <ScrollView Grid.Row="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-            <HorizontalStackLayout Padding="20,8,20,16" Spacing="8">
-                <Border x:Name="BtnPillows" StrokeThickness="0" StrokeShape="RoundRectangle 16" Padding="18,12">
-                    <Label x:Name="LblPillows" Text="Pillows" FontFamily="OpenSansSemibold" />
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnCategoryTapped" CommandParameter="Pillows" />
-                    </Border.GestureRecognizers>
-                </Border>
-                <Border x:Name="BtnQuilts" StrokeThickness="0" StrokeShape="RoundRectangle 16" Padding="18,12">
-                    <Label x:Name="LblQuilts" Text="Quilts" FontFamily="OpenSansSemibold" />
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnCategoryTapped" CommandParameter="Quilts" />
-                    </Border.GestureRecognizers>
-                </Border>
-                <Border x:Name="BtnBeddingSets" StrokeThickness="0" StrokeShape="RoundRectangle 16" Padding="18,12">
-                    <Label x:Name="LblBeddingSets" Text="Bedding sets" FontFamily="OpenSansSemibold" />
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnCategoryTapped" CommandParameter="BeddingSets" />
-                    </Border.GestureRecognizers>
-                </Border>
-                <Border x:Name="BtnMattresses" StrokeThickness="0" StrokeShape="RoundRectangle 16" Padding="18,12">
-                    <Label x:Name="LblMattresses" Text="Mattresses" FontFamily="OpenSansSemibold" />
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnCategoryTapped" CommandParameter="Mattresses" />
-                    </Border.GestureRecognizers>
-                </Border>
+        <Grid Grid.Row="0" HeightRequest="152" BackgroundColor="{StaticResource AccentDeep}" Padding="24,22">
+            <BoxView BackgroundColor="#3600B7FF" HeightRequest="260" WidthRequest="180" Rotation="-18" HorizontalOptions="End" TranslationX="42" />
+            <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,Auto">
+                <Label Text="SHOP / 02" TextColor="#9BD7FF" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.8" />
+                <Label Grid.Row="1" Text="Choose by feel." TextColor="White" FontFamily="OpenSansSemibold" FontSize="32" VerticalOptions="End" />
+                <Label x:Name="ResultCountLabel" Grid.Column="1" Grid.RowSpan="2" Text="00" TextColor="#80DDF2FF" FontFamily="OpenSansSemibold" FontSize="54" VerticalOptions="End" />
+            </Grid>
+        </Grid>
+        <ScrollView Grid.Row="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never" BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+            <HorizontalStackLayout Padding="20,12" Spacing="6">
+                <Border x:Name="BtnPillows" StrokeThickness="0" StrokeShape="RoundRectangle 3" Padding="18,11"><Label x:Name="LblPillows" Text="Pillows" FontFamily="OpenSansSemibold" /><Border.GestureRecognizers><TapGestureRecognizer Tapped="OnCategoryTapped" CommandParameter="Pillows" /></Border.GestureRecognizers></Border>
+                <Border x:Name="BtnQuilts" StrokeThickness="0" StrokeShape="RoundRectangle 3" Padding="18,11"><Label x:Name="LblQuilts" Text="Quilts" FontFamily="OpenSansSemibold" /><Border.GestureRecognizers><TapGestureRecognizer Tapped="OnCategoryTapped" CommandParameter="Quilts" /></Border.GestureRecognizers></Border>
+                <Border x:Name="BtnBeddingSets" StrokeThickness="0" StrokeShape="RoundRectangle 3" Padding="18,11"><Label x:Name="LblBeddingSets" Text="Bedding sets" FontFamily="OpenSansSemibold" /><Border.GestureRecognizers><TapGestureRecognizer Tapped="OnCategoryTapped" CommandParameter="BeddingSets" /></Border.GestureRecognizers></Border>
+                <Border x:Name="BtnMattresses" StrokeThickness="0" StrokeShape="RoundRectangle 3" Padding="18,11"><Label x:Name="LblMattresses" Text="Mattresses" FontFamily="OpenSansSemibold" /><Border.GestureRecognizers><TapGestureRecognizer Tapped="OnCategoryTapped" CommandParameter="Mattresses" /></Border.GestureRecognizers></Border>
             </HorizontalStackLayout>
         </ScrollView>
-
-        <Grid Grid.Row="2" RowDefinitions="Auto,*" Padding="20,4,20,24" RowSpacing="14">
-            <Label x:Name="CurrentCategoryTitle" Text="Cozy pillows" Style="{StaticResource SectionTitleStyle}" />
-
-            <CollectionView x:Name="CategoryCollectionView"
-                            Grid.Row="1"
-                            SelectionMode="Single"
-                            SelectionChanged="OnProductSelected">
+        <Grid Grid.Row="2" RowDefinitions="Auto,*" Padding="20,18,20,24" RowSpacing="14">
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout Spacing="3">
+                    <Label Text="CURATED BY COMFORT" Style="{StaticResource SignalLabelStyle}" />
+                    <Label x:Name="CurrentCategoryTitle" Text="Cozy pillows" Style="{StaticResource SectionTitleStyle}" />
+                </VerticalStackLayout>
+                <Label Grid.Column="1" Text="MATERIAL / SEASON / SUPPORT" Style="{StaticResource CaptionStyle}" VerticalOptions="End" />
+            </Grid>
+            <CollectionView x:Name="CategoryCollectionView" Grid.Row="1" SelectionMode="Single" SelectionChanged="OnProductSelected">
                 <CollectionView.ItemsLayout>
-                    <GridItemsLayout x:Name="CategoryGridLayout"
-                                     Orientation="Vertical"
-                                     Span="2"
-                                     VerticalItemSpacing="12"
-                                     HorizontalItemSpacing="12" />
+                    <GridItemsLayout x:Name="CategoryGridLayout" Orientation="Vertical" Span="2" VerticalItemSpacing="14" HorizontalItemSpacing="14" />
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:Product">
-                        <Border Style="{StaticResource CardStyle}" Padding="0" HeightRequest="244">
-                            <Grid RowDefinitions="150,*">
-                                <Image Source="{Binding ThumbnailUrl}"
-                                       Aspect="AspectFill"
-                                       SemanticProperties.Description="{Binding Name}" />
-                                <VerticalStackLayout Grid.Row="1" Padding="14,12" Spacing="4">
-                                    <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" />
-                                    <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
-                                </VerticalStackLayout>
+                        <Grid HeightRequest="276" RowDefinitions="188,*" BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                            <Image Source="{Binding ThumbnailUrl}" Aspect="AspectFill" SemanticProperties.Description="{Binding Name}" />
+                            <Border Margin="10" Padding="8,4" HorizontalOptions="Start" VerticalOptions="Start" StrokeThickness="0" BackgroundColor="#E6061B36"><Label Text="SELECTED" TextColor="White" FontFamily="OpenSansSemibold" FontSize="9" CharacterSpacing="1.4" /></Border>
+                            <Grid Grid.Row="1" Padding="14,10" ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Spacing="3"><Label Text="{Binding Category}" Style="{StaticResource SignalLabelStyle}" /><Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" /></VerticalStackLayout>
+                                <Label Grid.Column="1" Text="{Binding Price}" Style="{StaticResource PriceStyle}" VerticalOptions="End" />
                             </Grid>
-                        </Border>
+                            <BoxView Grid.Row="1" HeightRequest="3" Color="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" VerticalOptions="End" />
+                        </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-
-            <VerticalStackLayout x:Name="EmptyStateLabel"
-                                 Grid.Row="1"
-                                 IsVisible="False"
-                                 VerticalOptions="Center"
-                                 Spacing="6"
-                                 Padding="24">
-                <Label Text="Nothing here yet" Style="{StaticResource SectionTitleStyle}" HorizontalTextAlignment="Center" />
-                <Label Text="New pieces will appear here as the collection grows." Style="{StaticResource BodyStyle}" HorizontalTextAlignment="Center" />
+            <VerticalStackLayout x:Name="EmptyStateLabel" Grid.Row="1" IsVisible="False" VerticalOptions="Center" Spacing="7" Padding="24">
+                <Label Text="NO PIECES / 00" Style="{StaticResource SignalLabelStyle}" HorizontalTextAlignment="Center" />
+                <Label Text="This edit is being prepared." Style="{StaticResource SectionTitleStyle}" HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
         </Grid>
     </Grid>

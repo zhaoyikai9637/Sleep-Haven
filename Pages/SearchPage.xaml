@@ -1,47 +1,31 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
-    x:Class="SleepHaven.SearchPage"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SleepHaven"
-    Title="Search"
-    Shell.TabBarIsVisible="False">
-
-    <Grid RowDefinitions="Auto,*" Padding="20,18,20,24">
-        <VerticalStackLayout Spacing="4" Margin="0,0,0,16">
-            <Label Text="Search results" Style="{StaticResource PageTitleStyle}" />
-            <Label x:Name="SearchResultTitle" Style="{StaticResource BodyStyle}" />
-        </VerticalStackLayout>
-
-        <CollectionView x:Name="ResultsCollectionView"
-                        Grid.Row="1"
-                        SelectionMode="Single"
-                        SelectionChanged="OnProductSelected">
+<ContentPage x:Class="SleepHaven.SearchPage" xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:SleepHaven" Title="Search" Shell.TabBarIsVisible="False">
+    <Grid RowDefinitions="Auto,*">
+        <Grid Padding="22,20" BackgroundColor="{StaticResource AccentDeep}" ColumnDefinitions="Auto,*" ColumnSpacing="16">
+            <Label Text="04" TextColor="#8ED1FF" FontFamily="OpenSansSemibold" FontSize="42" />
+            <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                <Label Text="SEARCH / SIGNAL" TextColor="#9BD7FF" FontFamily="OpenSansSemibold" FontSize="10" CharacterSpacing="1.8" />
+                <Label x:Name="SearchResultTitle" TextColor="White" FontFamily="OpenSansSemibold" FontSize="22" />
+            </VerticalStackLayout>
+        </Grid>
+        <CollectionView x:Name="ResultsCollectionView" Grid.Row="1" Margin="20,18,20,24" SelectionMode="Single" SelectionChanged="OnProductSelected">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="local:Product">
-                    <Grid Padding="4,8" ColumnDefinitions="88,*" ColumnSpacing="14">
-                        <Border StrokeThickness="0" StrokeShape="RoundRectangle 14" HeightRequest="88">
-                            <Image Source="{Binding ThumbnailUrl}"
-                                   Aspect="AspectFill"
-                                   SemanticProperties.Description="{Binding Name}" />
-                        </Border>
+                    <Grid Padding="0,0,0,14" Margin="0,0,0,14" ColumnDefinitions="108,*" ColumnSpacing="16">
+                        <Image Source="{Binding ThumbnailUrl}" HeightRequest="104" Aspect="AspectFill" SemanticProperties.Description="{Binding Name}" />
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                            <Label Text="{Binding Category}" Style="{StaticResource SignalLabelStyle}" />
                             <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" />
-                            <Label Text="{Binding Category}" Style="{StaticResource CaptionStyle}" />
                             <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
                         </VerticalStackLayout>
+                        <BoxView Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End" Color="{AppThemeBinding Light={StaticResource LightStroke}, Dark={StaticResource DarkStroke}}" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-        <VerticalStackLayout x:Name="EmptyStateContainer"
-                             Grid.Row="1"
-                             IsVisible="False"
-                             VerticalOptions="Center"
-                             Padding="28"
-                             Spacing="6">
-            <Label Text="No matching products" Style="{StaticResource SectionTitleStyle}" HorizontalTextAlignment="Center" />
+        <VerticalStackLayout x:Name="EmptyStateContainer" Grid.Row="1" IsVisible="False" VerticalOptions="Center" Padding="28" Spacing="7">
+            <Label Text="NO SIGNAL / 00" Style="{StaticResource SignalLabelStyle}" HorizontalTextAlignment="Center" />
+            <Label Text="No matching products." Style="{StaticResource SectionTitleStyle}" HorizontalTextAlignment="Center" />
             <Label Text="Try a material, product type, or season." Style="{StaticResource BodyStyle}" HorizontalTextAlignment="Center" />
         </VerticalStackLayout>
     </Grid>
