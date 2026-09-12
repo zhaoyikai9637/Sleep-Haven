@@ -8,15 +8,17 @@ public partial class HomePage : ContentPage
     private readonly WeatherService _weatherService = new(new HttpClient());
     private IDispatcherTimer? _carouselTimer;
     private bool _isFirstLoad = true;
+    private bool _hasAnimated;
 
     public ObservableCollection<CarouselItem> CarouselItems { get; } =
     [
-        new("p012", "restful_recovery_memory_pillow_bedroom.png", "Recovery Sleep | Restful Recovery Memory Pillow"),
-        new("p007", "mulberrysilk_summerquilt_bedroom.png", "Summer Silk | Silk summer dress"),
-        new("p003", "tencelcotton_abdual_use_bedroom.png", "Tencel Comfort | Tencel Cotton AB Dual-Purpose Bedding Set")
+        new("p012", "restful_recovery_memory_pillow_bedroom.png", "Restful Recovery Memory Pillow"),
+        new("p007", "mulberrysilk_summerquilt_bedroom.png", "Mulberry Silk Summer Quilt"),
+        new("p003", "tencelcotton_abdual_use_bedroom.png", "Tencel Cotton Bedding Set")
     ];
 
     public ObservableCollection<Product> SearchSuggestions { get; } = [];
+    public ObservableCollection<SeasonSection> SeasonSections { get; } = [];
 
     public HomePage()
     {
@@ -29,6 +31,11 @@ public partial class HomePage : ContentPage
     {
         base.OnAppearing();
 
+        if (SeasonSections.Count == 0)
+        {
+            await LoadSeasonSectionsAsync();
+        }
+
         if (_isFirstLoad)
         {
             _isFirstLoad = false;
@@ -36,6 +43,7 @@ public partial class HomePage : ContentPage
         }
 
         StartCarousel();
+        await AnimateEntryAsync();
     }
 
     protected override void OnDisappearing()
@@ -44,8 +52,55 @@ public partial class HomePage : ContentPage
         _carouselTimer?.Stop();
     }
 
+    private async Task LoadSeasonSectionsAsync()
+    {
+        var products = await _databaseService.GetAllProductsAsync();
+        var definitions = new[]
+        {
+            (Key: "Spring", Title: "Spring layers", Summary: "Breathable cotton and soft structure"),
+            (Key: "Summer", Title: "Summer lightness", Summary: "Silk and cooling natural fibres"),
+            (Key: "Autumn", Title: "Autumn balance", Summary: "Comfort for cooler, drier nights"),
+            (Key: "Winter", Title: "Winter warmth", Summary: "Insulating loft without excess weight")
+        };
+
+        foreach (var definition in definitions)
+        {
+            var matches = products.Where(product =>
+                product.Category.Contains(definition.Key, StringComparison.OrdinalIgnoreCase));
+            SeasonSections.Add(new SeasonSection(
+                definition.Key,
+                definition.Title,
+                definition.Summary,
+                matches,
+                definition.Key == "Spring"));
+        }
+
+        SeasonLoadingState.IsVisible = false;
+        SeasonSectionsLayout.IsVisible = true;
+    }
+
+    private async Task AnimateEntryAsync()
+    {
+        if (_hasAnimated || !MotionPreferences.AreAnimationsEnabled)
+        {
+            return;
+        }
+
+        _hasAnimated = true;
+        HomeContent.Opacity = 0;
+        HomeContent.TranslationY = 12;
+        await Task.WhenAll(
+            HomeContent.FadeToAsync(1, 280, Easing.CubicOut),
+            HomeContent.TranslateToAsync(0, 0, 280, Easing.CubicOut));
+    }
+
     private void StartCarousel()
     {
+        if (!MotionPreferences.AreAnimationsEnabled)
+        {
+            return;
+        }
+
         _carouselTimer ??= CreateCarouselTimer();
         if (!_carouselTimer.IsRunning)
         {
@@ -56,7 +111,7 @@ public partial class HomePage : ContentPage
     private IDispatcherTimer CreateCarouselTimer()
     {
         var timer = Dispatcher.CreateTimer();
-        timer.Interval = TimeSpan.FromSeconds(3);
+        timer.Interval = TimeSpan.FromSeconds(4.5);
         timer.Tick += (_, _) =>
         {
             if (CarouselItems.Count == 0)
@@ -65,7 +120,7 @@ public partial class HomePage : ContentPage
             }
 
             var nextIndex = (BannerCarousel.Position + 1) % CarouselItems.Count;
-            BannerCarousel.ScrollTo(nextIndex, animate: nextIndex != 0);
+            BannerCarousel.ScrollTo(nextIndex, animate: true);
         };
         return timer;
     }
@@ -96,14 +151,14 @@ public partial class HomePage : ContentPage
 
     private async void OnSuggestionSelected(object sender, SelectionChangedEventArgs e)
     {
-        if (e.CurrentSelection.FirstOrDefault() is not Product selectedProduct)
+        if (e.CurrentSelection.FirstOrDefault() is not Product product)
         {
             return;
         }
 
         SuggestionsCollectionView.SelectedItem = null;
         MainSearchBar.Text = string.Empty;
-        await Navigation.PushAsync(new ProductDetailPage(selectedProduct));
+        await Navigation.PushAsync(new ProductDetailPage(product));
     }
 
     private async void OnSearchButtonPressed(object sender, EventArgs e)
@@ -116,15 +171,12 @@ public partial class HomePage : ContentPage
         }
     }
 
-    private void OnSpringTapped(object sender, EventArgs e) => ToggleSeason(SpringGrid, SpringArrow);
-    private void OnSummerTapped(object sender, EventArgs e) => ToggleSeason(SummerGrid, SummerArrow);
-    private void OnAutumnTapped(object sender, EventArgs e) => ToggleSeason(AutumnGrid, AutumnArrow);
-    private void OnWinterTapped(object sender, EventArgs e) => ToggleSeason(WinterGrid, WinterArrow);
-
-    private static void ToggleSeason(VisualElement panel, Label arrow)
+    private void OnSeasonTapped(object sender, TappedEventArgs e)
     {
-        panel.IsVisible = !panel.IsVisible;
-        arrow.Text = panel.IsVisible ? "▲" : "▼";
+        if (e.Parameter is SeasonSection season)
+        {
+            season.IsExpanded = !season.IsExpanded;
+        }
     }
 
     private async void OnProductTapped(object sender, TappedEventArgs e)
@@ -146,79 +198,72 @@ public partial class HomePage : ContentPage
 
     private async Task SelectCityAsync(string cityName)
     {
-        var singaporeSelected = cityName == "Singapore";
-        SetCityButtonState(BtnSingapore, singaporeSelected);
-        SetCityButtonState(BtnQingdao, !singaporeSelected);
+        SetCityButtonState(BtnSingapore, cityName == "Singapore");
+        SetCityButtonState(BtnQingdao, cityName == "Qingdao");
         await FetchWeatherAndRecommendAsync(cityName);
     }
 
     private static void SetCityButtonState(Button button, bool selected)
     {
-        button.BackgroundColor = Color.FromArgb(selected ? "#1A2980" : "#F5F5F5");
-        button.TextColor = selected ? Colors.White : Colors.Gray;
+        var resources = Application.Current?.Resources;
+        var isDark = Application.Current?.RequestedTheme == AppTheme.Dark;
+        button.BackgroundColor = selected
+            ? (Color?)resources?["Accent"] ?? Color.FromArgb("#2F6B5F")
+            : (Color?)resources?[isDark ? "DarkSurfaceMuted" : "LightSurfaceMuted"] ?? Color.FromArgb("#E6ECEA");
+        button.TextColor = selected
+            ? (Color?)resources?["OnAccent"] ?? Color.FromArgb("#F7FAF9")
+            : (Color?)resources?[isDark ? "DarkTextSecondary" : "LightTextSecondary"] ?? Color.FromArgb("#586762");
     }
 
     private async Task FetchWeatherAndRecommendAsync(string cityName)
     {
+        WeatherRecommendationCard.IsVisible = true;
+        WeatherTitleLabel.Text = $"Checking {cityName} weather";
+        WeatherBodyLabel.Text = "Selecting a comfortable seasonal match.";
+
         try
         {
             var weather = await _weatherService.GetCurrentAsync(cityName);
-            await ApplyWeatherRecommendationAsync(weather);
+            ApplyWeatherRecommendation(weather);
         }
-        catch (Exception ex)
+        catch
         {
-            await DisplayAlertAsync("Network Error", $"Unable to retrieve weather: {ex.Message}", "OK");
+            WeatherTitleLabel.Text = "Weather is unavailable";
+            WeatherBodyLabel.Text = "You can still explore every seasonal collection below.";
         }
     }
 
-    private async Task ApplyWeatherRecommendationAsync(WeatherSnapshot weather)
+    private void ApplyWeatherRecommendation(WeatherSnapshot weather)
     {
-        CollapseSeasons();
+        var targetSeason = GetRecommendedSeason(weather);
+        foreach (var season in SeasonSections)
+        {
+            season.IsExpanded = season.Key == targetSeason;
+        }
 
-        if (weather.CityName == "Singapore" && weather.IsRainy)
+        WeatherTitleLabel.Text = $"{weather.CityName}, {weather.Temperature:F1}°C";
+        WeatherBodyLabel.Text = targetSeason switch
         {
-            await ShowRecommendationAsync(AutumnGrid, AutumnArrow, "It's raining in Singapore 🌧️\nWe've selected cozy autumn products for you.", "Explore Now");
-        }
-        else if (weather.CityName == "Singapore")
-        {
-            await ShowRecommendationAsync(SummerGrid, SummerArrow, $"Singapore humidity is {weather.Humidity}% 💦\nWe've selected breathable summer products for you.", "Stay Cool");
-        }
-        else if (weather.CityName == "Qingdao" && weather.Temperature is >= 10 and <= 25)
-        {
-            await ShowRecommendationAsync(SpringGrid, SpringArrow, $"Qingdao is {weather.Temperature:F1}°C 🌸\nWe've selected spring products for you.", "View Recommendations");
-        }
-        else if (weather.Temperature < 10)
-        {
-            await ShowRecommendationAsync(WinterGrid, WinterArrow, $"It's {weather.Temperature:F1}°C ❄️\nWe've selected warm winter products for you.", "Stay Warm");
-        }
-        else
-        {
-            await ShowRecommendationAsync(SpringGrid, SpringArrow, $"The weather is pleasant at {weather.Temperature:F1}°C 🌸\nHere are today's picks.", "View");
-        }
+            "Summer" => $"Humidity is {weather.Humidity}%. Start with light, breathable layers.",
+            "Autumn" => "Rain is in the forecast. Start with balanced, cosy layers.",
+            "Winter" => "The air is cold. Start with insulating quilts and bedding.",
+            _ => "The weather is mild. Start with breathable spring layers."
+        };
     }
 
-    private void CollapseSeasons()
+    private static string GetRecommendedSeason(WeatherSnapshot weather)
     {
-        foreach (var (panel, arrow) in GetSeasonControls())
+        if (weather.CityName == "Singapore")
         {
-            panel.IsVisible = false;
-            arrow.Text = "▼";
+            return weather.IsRainy ? "Autumn" : "Summer";
         }
-    }
 
-    private async Task ShowRecommendationAsync(VisualElement panel, Label arrow, string message, string buttonText)
-    {
-        panel.IsVisible = true;
-        arrow.Text = "▲";
-        await DisplayAlertAsync("Smart Assistant", message, buttonText);
-    }
+        if (weather.Temperature < 10)
+        {
+            return "Winter";
+        }
 
-    private IEnumerable<(VisualElement Panel, Label Arrow)> GetSeasonControls()
-    {
-        yield return (SpringGrid, SpringArrow);
-        yield return (SummerGrid, SummerArrow);
-        yield return (AutumnGrid, AutumnArrow);
-        yield return (WinterGrid, WinterArrow);
+        return weather.Temperature <= 25 ? "Spring" : "Summer";
     }
 
     private static void ReplaceItems<T>(ObservableCollection<T> target, IEnumerable<T> items)
@@ -229,6 +274,4 @@ public partial class HomePage : ContentPage
             target.Add(item);
         }
     }
-
-    public sealed record CarouselItem(string Id, string ImageUrl, string Title);
 }

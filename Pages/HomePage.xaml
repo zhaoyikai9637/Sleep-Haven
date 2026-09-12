@@ -1,265 +1,192 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SleepHaven.HomePage"
-             Shell.NavBarIsVisible="False"
-             Title="Home"
-             BackgroundColor="White">
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SleepHaven.HomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SleepHaven"
+    x:Name="HomePageRoot"
+    Title="Home"
+    Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto,Auto,*">
+        <Grid Grid.Row="0" Padding="24,20,24,8" ColumnDefinitions="*,Auto" ColumnSpacing="16">
+            <VerticalStackLayout Spacing="2">
+                <Label Text="SleepHaven" Style="{StaticResource PageTitleStyle}" />
+                <Label Text="Comfort selected for the way you rest." Style="{StaticResource CaptionStyle}" />
+            </VerticalStackLayout>
 
-        <VerticalStackLayout Grid.Row="0" Spacing="0">
-
-            <HorizontalStackLayout Spacing="15" Margin="15,15,15,5">
-                <Button x:Name="BtnSingapore" 
-                        Text="🇸🇬 Singapore" 
-                        FontSize="14" FontAttributes="Bold"
-                        CornerRadius="20" HeightRequest="40" Padding="20,0"
-                        BackgroundColor="#1A2980" TextColor="White"
-                        Clicked="OnSingaporeClicked"/>
-
-                <Button x:Name="BtnQingdao" 
-                        Text="🇨🇳 Qingdao" 
-                        FontSize="14" FontAttributes="Bold"
-                        CornerRadius="20" HeightRequest="40" Padding="20,0"
-                        BackgroundColor="#F5F5F5" TextColor="Gray"
-                        Clicked="OnQingdaoClicked"/>
+            <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                <Button x:Name="BtnSingapore"
+                        Text="Singapore"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Clicked="OnSingaporeClicked" />
+                <Button x:Name="BtnQingdao"
+                        Text="Qingdao"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Clicked="OnQingdaoClicked" />
             </HorizontalStackLayout>
+        </Grid>
 
-            <SearchBar x:Name="MainSearchBar" 
-                       Placeholder="Search for sleep inspiration..." 
-                       TextChanged="OnSearchBarTextChanged"
-                       SearchButtonPressed="OnSearchButtonPressed"
-                       Margin="15,5,15,10" />
+        <SearchBar x:Name="MainSearchBar"
+                   Grid.Row="1"
+                   Margin="20,8,20,14"
+                   Placeholder="Search bedding, quilts, pillows"
+                   TextChanged="OnSearchBarTextChanged"
+                   SearchButtonPressed="OnSearchButtonPressed" />
 
-        </VerticalStackLayout>
-
-        <ScrollView x:Name="MainContentScrollView" Grid.Row="1">
-            <VerticalStackLayout Padding="15,0,15,15" Spacing="15">
-
-                <Border Stroke="Transparent" StrokeThickness="0" StrokeShape="RoundRectangle 10" Padding="0" Margin="0,0,0,5">
+        <ScrollView x:Name="MainContentScrollView" Grid.Row="2">
+            <VerticalStackLayout x:Name="HomeContent" Padding="20,0,20,28" Spacing="24">
+                <Border Style="{StaticResource CardStyle}" Padding="0">
                     <Grid>
-                        <CarouselView x:Name="BannerCarousel" ItemsSource="{Binding CarouselItems}" HeightRequest="180" IndicatorView="indicatorView" Loop="True">
+                        <CarouselView x:Name="BannerCarousel"
+                                      HeightRequest="260"
+                                      IndicatorView="HeroIndicator"
+                                      ItemsSource="{Binding CarouselItems}"
+                                      Loop="True">
                             <CarouselView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid HeightRequest="180">
+                                <DataTemplate x:DataType="local:CarouselItem">
+                                    <Grid HeightRequest="260">
                                         <Grid.GestureRecognizers>
                                             <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="{Binding Id}" />
                                         </Grid.GestureRecognizers>
-
-                                        <Image Source="{Binding ImageUrl}" 
-                                            HeightRequest="180" 
-                                            Aspect="AspectFill" 
-                                            HorizontalOptions="Fill" 
-                                            VerticalOptions="Fill" />
-
-                                        <Border BackgroundColor="#66000000" VerticalOptions="End" StrokeThickness="0" Padding="15,10">
-                                            <Label Text="{Binding Title}" TextColor="White" FontAttributes="Bold" FontSize="16"/>
-                                        </Border>
+                                        <Image Source="{Binding ImageUrl}"
+                                               Aspect="AspectFill"
+                                               SemanticProperties.Description="{Binding Title}" />
+                                        <BoxView VerticalOptions="End" HeightRequest="92">
+                                            <BoxView.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                    <GradientStop Color="#00101514" Offset="0" />
+                                                    <GradientStop Color="#D9101514" Offset="1" />
+                                                </LinearGradientBrush>
+                                            </BoxView.Background>
+                                        </BoxView>
+                                        <Label Text="{Binding Title}"
+                                               Margin="20,0,64,18"
+                                               VerticalOptions="End"
+                                               FontFamily="OpenSansSemibold"
+                                               FontSize="18"
+                                               TextColor="#F7FAF9"
+                                               MaxLines="2" />
                                     </Grid>
                                 </DataTemplate>
                             </CarouselView.ItemTemplate>
                         </CarouselView>
-                        <IndicatorView x:Name="indicatorView" IndicatorColor="#E0E0E0" SelectedIndicatorColor="#2DE2E6" HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,10" />
+                        <IndicatorView x:Name="HeroIndicator"
+                                       Margin="0,0,18,20"
+                                       HorizontalOptions="End"
+                                       VerticalOptions="End" />
                     </Grid>
                 </Border>
 
-                <VerticalStackLayout Spacing="15">
-
-                    <Border Stroke="#E0E0E0" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-                        <VerticalStackLayout>
-                            <Grid Padding="15" BackgroundColor="#F1F8E9">
-                                <Label Text="Spring Collection" FontAttributes="Bold" TextColor="#33691E" VerticalOptions="Center"/>
-                                <Label x:Name="SpringArrow" Text="▲" HorizontalOptions="End" VerticalOptions="Center" TextColor="#33691E"/>
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnSpringTapped"/>
-                                </Grid.GestureRecognizers>
-                            </Grid>
-                            <VerticalStackLayout x:Name="SpringGrid" IsVisible="True" Padding="15,10,15,20" Spacing="15">
-                                <Border Stroke="#EEEEEE" StrokeShape="RoundRectangle 10" Padding="10" BackgroundColor="White">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="p001"/>
-                                    </Border.GestureRecognizers>
-                                    <Grid ColumnDefinitions="Auto, *">
-                                        <Border Grid.Column="0" Stroke="Transparent" StrokeShape="RoundRectangle 8" HeightRequest="80" WidthRequest="80">
-                                            <Image Source="shidana_folded.png" Aspect="AspectFill" BackgroundColor="#F5F5F5"/>
-                                        </Border>
-                                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="15,0,0,0">
-                                            <Label Text="Shidana 3D Jacquard Set" FontAttributes="Bold" FontSize="16" TextColor="#333333" LineBreakMode="TailTruncation" MaxLines="1"/>
-                                            <Label Text="BeddingSets - Spring" FontSize="12" TextColor="Gray"/>
-                                            <Label Text="$129.00" FontSize="16" TextColor="#2DE2E6" FontAttributes="Bold" Margin="0,5,0,0"/>
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </Border>
-                                <Border Stroke="#EEEEEE" StrokeShape="RoundRectangle 10" Padding="10" BackgroundColor="White">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="p002"/>
-                                    </Border.GestureRecognizers>
-                                    <Grid ColumnDefinitions="Auto, *">
-                                        <Border Grid.Column="0" Stroke="Transparent" StrokeShape="RoundRectangle 8" HeightRequest="80" WidthRequest="80">
-                                            <Image Source="awati_long_staple_cotton_quilt_folded.png" Aspect="AspectFill" BackgroundColor="#F5F5F5"/>
-                                        </Border>
-                                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="15,0,0,0">
-                                            <Label Text="Awati Long-Staple Cotton" FontAttributes="Bold" FontSize="16" TextColor="#333333" LineBreakMode="TailTruncation" MaxLines="1"/>
-                                            <Label Text="BeddingSets - Spring" FontSize="12" TextColor="Gray"/>
-                                            <Label Text="$299.00" FontSize="16" TextColor="#2DE2E6" FontAttributes="Bold" Margin="0,5,0,0"/>
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </Border>
-                            </VerticalStackLayout>
+                <Border x:Name="WeatherRecommendationCard"
+                        Style="{StaticResource FlatSurfaceStyle}"
+                        Padding="18"
+                        IsVisible="False">
+                    <Grid ColumnDefinitions="5,*" ColumnSpacing="14">
+                        <BoxView BackgroundColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}"
+                                 CornerRadius="3" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label x:Name="WeatherTitleLabel" Style="{StaticResource ProductNameStyle}" />
+                            <Label x:Name="WeatherBodyLabel" Style="{StaticResource BodyStyle}" />
                         </VerticalStackLayout>
-                    </Border>
+                    </Grid>
+                </Border>
 
-                    <Border Stroke="#E0E0E0" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-                        <VerticalStackLayout>
-                            <Grid Padding="15" BackgroundColor="#E0F7FA">
-                                <Label Text="Summer Collection" FontAttributes="Bold" TextColor="#006064" VerticalOptions="Center"/>
-                                <Label x:Name="SummerArrow" Text="▼" HorizontalOptions="End" VerticalOptions="Center" TextColor="#006064"/>
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnSummerTapped"/>
-                                </Grid.GestureRecognizers>
-                            </Grid>
-                            <VerticalStackLayout x:Name="SummerGrid" IsVisible="False" Padding="15,10,15,20" Spacing="15">
-                                <Border Stroke="#EEEEEE" StrokeShape="RoundRectangle 10" Padding="10" BackgroundColor="White">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="p004"/>
-                                    </Border.GestureRecognizers>
-                                    <Grid ColumnDefinitions="Auto, *">
-                                        <Border Grid.Column="0" Stroke="Transparent" StrokeShape="RoundRectangle 8" HeightRequest="80" WidthRequest="80">
-                                            <Image Source="silk_duvet_folded.png" Aspect="AspectFill" BackgroundColor="#F5F5F5"/>
-                                        </Border>
-                                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="15,0,0,0">
-                                            <Label Text="Pure Silk Summer Quilt" FontAttributes="Bold" FontSize="16" TextColor="#333333" LineBreakMode="TailTruncation" MaxLines="1"/>
-                                            <Label Text="Quilts - Summer Sale" FontSize="12" TextColor="Gray"/>
-                                            <Label Text="$189.00" FontSize="16" TextColor="#2DE2E6" FontAttributes="Bold" Margin="0,5,0,0"/>
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </Border>
-                                <Border Stroke="#EEEEEE" StrokeShape="RoundRectangle 10" Padding="10" BackgroundColor="White">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="p003"/>
-                                    </Border.GestureRecognizers>
-                                    <Grid ColumnDefinitions="Auto, *">
-                                        <Border Grid.Column="0" Stroke="Transparent" StrokeShape="RoundRectangle 8" HeightRequest="80" WidthRequest="80">
-                                            <Image Source="tencelcotton_abdual_use_folded.png" Aspect="AspectFill" BackgroundColor="#F5F5F5"/>
-                                        </Border>
-                                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="15,0,0,0">
-                                            <Label Text="Tencel AB Dual-Purpose" FontAttributes="Bold" FontSize="16" TextColor="#333333" LineBreakMode="TailTruncation" MaxLines="1"/>
-                                            <Label Text="BeddingSets - Summer" FontSize="12" TextColor="Gray"/>
-                                            <Label Text="$220.00" FontSize="16" TextColor="#2DE2E6" FontAttributes="Bold" Margin="0,5,0,0"/>
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </Border>
-                            </VerticalStackLayout>
-                        </VerticalStackLayout>
-                    </Border>
-
-                    <Border Stroke="#E0E0E0" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-                        <VerticalStackLayout>
-                            <Grid Padding="15" BackgroundColor="#FFF8E1">
-                                <Label Text="Autumn Collection" FontAttributes="Bold" TextColor="#FF8F00" VerticalOptions="Center"/>
-                                <Label x:Name="AutumnArrow" Text="▼" HorizontalOptions="End" VerticalOptions="Center" TextColor="#FF8F00"/>
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnAutumnTapped"/>
-                                </Grid.GestureRecognizers>
-                            </Grid>
-                            <VerticalStackLayout x:Name="AutumnGrid" IsVisible="False" Padding="15,10,15,20" Spacing="15">
-                                <Border Stroke="#EEEEEE" StrokeShape="RoundRectangle 10" Padding="10" BackgroundColor="White">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="p005"/>
-                                    </Border.GestureRecognizers>
-                                    <Grid ColumnDefinitions="Auto, *">
-                                        <Border Grid.Column="0" Stroke="Transparent" StrokeShape="RoundRectangle 8" HeightRequest="80" WidthRequest="80">
-                                            <Image Source="dream_folded.png" Aspect="AspectFill" BackgroundColor="#F5F5F5"/>
-                                        </Border>
-                                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="15,0,0,0">
-                                            <Label Text="&quot;Dreams&quot; Printed Set" FontAttributes="Bold" FontSize="16" TextColor="#333333" LineBreakMode="TailTruncation" MaxLines="1"/>
-                                            <Label Text="Quilts - Autumn" FontSize="12" TextColor="Gray"/>
-                                            <Label Text="$315.00" FontSize="16" TextColor="#2DE2E6" FontAttributes="Bold" Margin="0,5,0,0"/>
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </Border>
-                                <Border Stroke="#EEEEEE" StrokeShape="RoundRectangle 10" Padding="10" BackgroundColor="White">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="p013"/>
-                                    </Border.GestureRecognizers>
-                                    <Grid ColumnDefinitions="Auto, *">
-                                        <Border Grid.Column="0" Stroke="Transparent" StrokeShape="RoundRectangle 8" HeightRequest="80" WidthRequest="80">
-                                            <Image Source="bamboo_charcoal_mattress_folded.png" Aspect="AspectFill" BackgroundColor="#F5F5F5"/>
-                                        </Border>
-                                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="15,0,0,0">
-                                            <Label Text="Zen Carbon Sleep Pad" FontAttributes="Bold" FontSize="16" TextColor="#333333" LineBreakMode="TailTruncation" MaxLines="1"/>
-                                            <Label Text="Mattresses - Autumn" FontSize="12" TextColor="Gray"/>
-                                            <Label Text="$199.00" FontSize="16" TextColor="#2DE2E6" FontAttributes="Bold" Margin="0,5,0,0"/>
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </Border>
-                            </VerticalStackLayout>
-                        </VerticalStackLayout>
-                    </Border>
-
-                    <Border Stroke="#E0E0E0" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-                        <VerticalStackLayout>
-                            <Grid Padding="15" BackgroundColor="#E3F2FD">
-                                <Label Text="Winter Collection" FontAttributes="Bold" TextColor="#1565C0" VerticalOptions="Center"/>
-                                <Label x:Name="WinterArrow" Text="▼" HorizontalOptions="End" VerticalOptions="Center" TextColor="#1565C0"/>
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnWinterTapped"/>
-                                </Grid.GestureRecognizers>
-                            </Grid>
-                            <VerticalStackLayout x:Name="WinterGrid" IsVisible="False" Padding="15,10,15,20" Spacing="15">
-                                <Border Stroke="#EEEEEE" StrokeShape="RoundRectangle 10" Padding="10" BackgroundColor="White">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="p006"/>
-                                    </Border.GestureRecognizers>
-                                    <Grid ColumnDefinitions="Auto, *">
-                                        <Border Grid.Column="0" Stroke="Transparent" StrokeShape="RoundRectangle 8" HeightRequest="80" WidthRequest="80">
-                                            <Image Source="fantasydream_folded.png" Aspect="AspectFill" BackgroundColor="#F5F5F5"/>
-                                        </Border>
-                                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="15,0,0,0">
-                                            <Label Text="Fantasy Dream Jacquard" FontAttributes="Bold" FontSize="16" TextColor="#333333" LineBreakMode="TailTruncation" MaxLines="1"/>
-                                            <Label Text="BeddingSets - Winter" FontSize="12" TextColor="Gray"/>
-                                            <Label Text="$320.00" FontSize="16" TextColor="#2DE2E6" FontAttributes="Bold" Margin="0,5,0,0"/>
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </Border>
-                                <Border Stroke="#EEEEEE" StrokeShape="RoundRectangle 10" Padding="10" BackgroundColor="White">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="p008"/>
-                                    </Border.GestureRecognizers>
-                                    <Grid ColumnDefinitions="Auto, *">
-                                        <Border Grid.Column="0" Stroke="Transparent" StrokeShape="RoundRectangle 8" HeightRequest="80" WidthRequest="80">
-                                            <Image Source="selina_folded.png" Aspect="AspectFill" BackgroundColor="#F5F5F5"/>
-                                        </Border>
-                                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="15,0,0,0">
-                                            <Label Text="Selina Goose Down Quilt" FontAttributes="Bold" FontSize="16" TextColor="#333333" LineBreakMode="TailTruncation" MaxLines="1"/>
-                                            <Label Text="Quilts - Winter" FontSize="12" TextColor="Gray"/>
-                                            <Label Text="$899.00" FontSize="16" TextColor="#2DE2E6" FontAttributes="Bold" Margin="0,5,0,0"/>
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </Border>
-                            </VerticalStackLayout>
-                        </VerticalStackLayout>
-                    </Border>
-
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Seasonal comfort" Style="{StaticResource SectionTitleStyle}" />
+                    <Label Text="Open a season to browse the complete edit." Style="{StaticResource BodyStyle}" />
                 </VerticalStackLayout>
-                <BoxView HeightRequest="20" BackgroundColor="Transparent"/>
+
+                <VerticalStackLayout x:Name="SeasonLoadingState" Spacing="12">
+                    <Border Style="{StaticResource FlatSurfaceStyle}" HeightRequest="74" />
+                    <Border Style="{StaticResource FlatSurfaceStyle}" HeightRequest="74" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout x:Name="SeasonSectionsLayout"
+                                     Spacing="12"
+                                     IsVisible="False"
+                                     BindableLayout.ItemsSource="{Binding SeasonSections}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="local:SeasonSection">
+                            <Border Style="{StaticResource FlatSurfaceStyle}" Padding="0">
+                                <VerticalStackLayout Spacing="0">
+                                    <Grid Padding="18,16" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnSeasonTapped" CommandParameter="{Binding .}" />
+                                        </Grid.GestureRecognizers>
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label Text="{Binding Title}" Style="{StaticResource ProductNameStyle}" />
+                                            <Label Text="{Binding Summary}" Style="{StaticResource CaptionStyle}" />
+                                        </VerticalStackLayout>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding ToggleSymbol}"
+                                               FontSize="17"
+                                               TextColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}"
+                                               VerticalOptions="Center" />
+                                    </Grid>
+
+                                    <VerticalStackLayout IsVisible="{Binding IsExpanded}"
+                                                         Padding="12,0,12,12"
+                                                         Spacing="10"
+                                                         BindableLayout.ItemsSource="{Binding Products}">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate x:DataType="local:Product">
+                                                <Grid Padding="6" ColumnDefinitions="92,*" ColumnSpacing="14">
+                                                    <Grid.GestureRecognizers>
+                                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="{Binding Id}" />
+                                                    </Grid.GestureRecognizers>
+                                                    <Border StrokeThickness="0" StrokeShape="RoundRectangle 14" HeightRequest="92">
+                                                        <Image Source="{Binding ThumbnailUrl}"
+                                                               Aspect="AspectFill"
+                                                               SemanticProperties.Description="{Binding Name}" />
+                                                    </Border>
+                                                    <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                                        <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" />
+                                                        <Label Text="{Binding Category}" Style="{StaticResource CaptionStyle}" />
+                                                        <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
+                                                    </VerticalStackLayout>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
             </VerticalStackLayout>
         </ScrollView>
 
-        <Grid x:Name="SearchSuggestionsOverlay" Grid.Row="1" IsVisible="False" BackgroundColor="White">
-            <CollectionView x:Name="SuggestionsCollectionView" SelectionMode="Single" SelectionChanged="OnSuggestionSelected">
+        <Grid x:Name="SearchSuggestionsOverlay"
+              Grid.Row="2"
+              Padding="20,4,20,20"
+              IsVisible="False"
+              BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+            <CollectionView x:Name="SuggestionsCollectionView"
+                            SelectionMode="Single"
+                            SelectionChanged="OnSuggestionSelected">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Padding="20,15" ColumnDefinitions="Auto, *">
-                            <Label Text="🔍" Grid.Column="0" VerticalOptions="Center" Margin="0,0,15,0" FontSize="18" TextColor="Gray"/>
-                            <Label Text="{Binding Name}" Grid.Column="1" VerticalOptions="Center" FontSize="16" TextColor="#333333"/>
-                            <BoxView Grid.Column="0" Grid.ColumnSpan="2" HeightRequest="1" Color="#F0F0F0" VerticalOptions="End" Margin="0,15,0,-15"/>
+                    <DataTemplate x:DataType="local:Product">
+                        <Grid Padding="4,10" ColumnDefinitions="64,*" ColumnSpacing="14">
+                            <Border StrokeThickness="0" StrokeShape="RoundRectangle 14" HeightRequest="64" WidthRequest="64">
+                                <Image Source="{Binding ThumbnailUrl}"
+                                       Aspect="AspectFill"
+                                       SemanticProperties.Description="{Binding Name}" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
+                                <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" MaxLines="1" />
+                                <Label Text="{Binding Category}" Style="{StaticResource CaptionStyle}" />
+                            </VerticalStackLayout>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Padding="24" Spacing="6" VerticalOptions="Center">
+                        <Label Text="No close matches" Style="{StaticResource SectionTitleStyle}" HorizontalTextAlignment="Center" />
+                        <Label Text="Try a product type, material, or season." Style="{StaticResource BodyStyle}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
             </CollectionView>
         </Grid>
-
     </Grid>
 </ContentPage>

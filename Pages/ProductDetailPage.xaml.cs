@@ -4,6 +4,7 @@ public partial class ProductDetailPage : ContentPage
 {
     private readonly Product _currentProduct;
     private readonly DatabaseService _databaseService = new();
+    private bool? _isLandscape;
 
     public ProductDetailPage(Product product)
     {
@@ -11,6 +12,7 @@ public partial class ProductDetailPage : ContentPage
 
         _currentProduct = product;
         ProductImage.Source = product.ThumbnailUrl;
+        SemanticProperties.SetDescription(ProductImage, product.Name);
         NameLabel.Text = product.Name;
         PriceLabel.Text = product.Price;
         CategoryLabel.Text = product.Category;
@@ -35,39 +37,46 @@ public partial class ProductDetailPage : ContentPage
     {
         base.OnSizeAllocated(width, height);
 
-        if (width > height) // Horizontal screen logic
+        var isLandscape = width > height;
+        if (_isLandscape == isLandscape)
+        {
+            return;
+        }
+
+        _isLandscape = isLandscape;
+        if (isLandscape)
         {
             ContentGrid.RowDefinitions.Clear();
             ContentGrid.ColumnDefinitions.Clear();
             ContentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(6, GridUnitType.Star) });
             ContentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(4, GridUnitType.Star) });
 
-            Grid.SetColumn(ProductImage, 0);
-            Grid.SetRow(ProductImage, 0);
+            Grid.SetColumn(ImageFrame, 0);
+            Grid.SetRow(ImageFrame, 0);
 
             Grid.SetColumn(TextScrollView, 1);
             Grid.SetRow(TextScrollView, 0);
 
-            ProductImage.HeightRequest = -1;
+            ImageFrame.HeightRequest = -1;
             ProductImage.Source = _currentProduct.LandscapeUrl;
             ProductImage.Aspect = Aspect.AspectFill;
         }
-        else // Vertical screen logic (created by Gemini)
+        else
         {
             ContentGrid.ColumnDefinitions.Clear();
             ContentGrid.RowDefinitions.Clear();
             ContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             ContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
 
-            Grid.SetColumn(ProductImage, 0);
-            Grid.SetRow(ProductImage, 0);
+            Grid.SetColumn(ImageFrame, 0);
+            Grid.SetRow(ImageFrame, 0);
 
             Grid.SetColumn(TextScrollView, 0);
             Grid.SetRow(TextScrollView, 1);
 
-            ProductImage.HeightRequest = 300;
+            ImageFrame.HeightRequest = 320;
             ProductImage.Source = _currentProduct.ThumbnailUrl;
-            ProductImage.Aspect = Aspect.AspectFit;
+            ProductImage.Aspect = Aspect.AspectFill;
         }
     }
 
@@ -77,15 +86,11 @@ public partial class ProductDetailPage : ContentPage
         await _databaseService.UpdateProductAsync(_currentProduct);
         UpdateFavoriteIcon();
 
-        if (_currentProduct.IsFavorite)
-        {
-            await DisplayAlertAsync("Success", "Added to your collection!", "OK");
-        }
     }
 
-    //Red Heart UI Status Update Function
     private void UpdateFavoriteIcon()
     {
         FavoriteToolbarItem.IconImageSource = _currentProduct.IsFavorite ? "collect_on.png" : "collect_off.png";
+        FavoriteToolbarItem.Text = _currentProduct.IsFavorite ? "Saved" : "Save";
     }
 }

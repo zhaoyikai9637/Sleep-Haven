@@ -7,22 +7,17 @@
     Title="SleepHaven">
 
     <TabBar>
-        <ShellContent
-        x:Name="TabHome"
-        Title="Home"
-        Icon="home_off.png" 
-        ContentTemplate="{DataTemplate local:HomePage}" />
-
-        <ShellContent
-        x:Name="TabCategory"
-        Title="Category"
-        Icon="category_off.png"
-        ContentTemplate="{DataTemplate local:CategoryPage}" />
-
-        <ShellContent
-        x:Name="TabCollection"
-        Title="Collect"
-        Icon="collection_off.png"
-        ContentTemplate="{DataTemplate local:CollectionPage}" />
+        <ShellContent x:Name="TabHome"
+                      Title="Home"
+                      Icon="home_off.png"
+                      ContentTemplate="{DataTemplate local:HomePage}" />
+        <ShellContent x:Name="TabCategory"
+                      Title="Category"
+                      Icon="category_off.png"
+                      ContentTemplate="{DataTemplate local:CategoryPage}" />
+        <ShellContent x:Name="TabCollection"
+                      Title="Collect"
+                      Icon="collect_off.png"
+                      ContentTemplate="{DataTemplate local:CollectionPage}" />
     </TabBar>
 </Shell>

@@ -7,14 +7,15 @@ public partial class CategoryPage : ContentPage
     private static readonly IReadOnlyDictionary<string, string> CategoryTitles =
         new Dictionary<string, string>
         {
-            ["Pillows"] = "Cozy Pillows",
-            ["Quilts"] = "Warm Quilts",
-            ["BeddingSets"] = "Premium Bedding Sets",
-            ["Mattresses"] = "Supportive Mattresses"
+            ["Pillows"] = "Cozy pillows",
+            ["Quilts"] = "Warm quilts",
+            ["BeddingSets"] = "Bedding sets",
+            ["Mattresses"] = "Supportive mattresses"
         };
 
     private readonly DatabaseService _databaseService = new();
     private string _currentCategory = "Pillows";
+    private int _currentSpan = 2;
 
     public ObservableCollection<Product> FilteredProducts { get; } = [];
 
@@ -66,12 +67,29 @@ public partial class CategoryPage : ContentPage
 
     private void UpdateTabStyles(string selectedCategory)
     {
+        var resources = Application.Current?.Resources;
+        var isDark = Application.Current?.RequestedTheme == AppTheme.Dark;
+        var selectedBackground = (Color?)resources?["Accent"] ?? Color.FromArgb("#2F6B5F");
+        var selectedText = (Color?)resources?["OnAccent"] ?? Color.FromArgb("#F7FAF9");
+        var idleBackground = (Color?)resources?[isDark ? "DarkSurfaceMuted" : "LightSurfaceMuted"] ?? Color.FromArgb("#E6ECEA");
+        var idleText = (Color?)resources?[isDark ? "DarkTextSecondary" : "LightTextSecondary"] ?? Color.FromArgb("#586762");
+
         foreach (var (category, button, label) in GetTabs())
         {
             var selected = category == selectedCategory;
-            button.BackgroundColor = selected ? Colors.White : Colors.Transparent;
-            label.TextColor = selected ? Color.FromArgb("#1A2980") : Colors.Gray;
-            label.FontAttributes = selected ? FontAttributes.Bold : FontAttributes.None;
+            button.BackgroundColor = selected ? selectedBackground : idleBackground;
+            label.TextColor = selected ? selectedText : idleText;
+        }
+    }
+
+    protected override void OnSizeAllocated(double width, double height)
+    {
+        base.OnSizeAllocated(width, height);
+        var span = width >= 1100 ? 3 : width >= 620 ? 2 : 1;
+        if (span != _currentSpan)
+        {
+            _currentSpan = span;
+            CategoryGridLayout.Span = span;
         }
     }
 

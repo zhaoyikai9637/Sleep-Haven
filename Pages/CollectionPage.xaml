@@ -1,51 +1,42 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SleepHaven.CollectionPage"
-             Title="My Collection">
+<ContentPage
+    x:Class="SleepHaven.CollectionPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SleepHaven"
+    Title="Saved"
+    Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto,*">
+        <VerticalStackLayout Padding="24,20,24,16" Spacing="4">
+            <Label Text="Saved for later" Style="{StaticResource PageTitleStyle}" />
+            <Label Text="A quiet shortlist of the pieces you want to revisit." Style="{StaticResource BodyStyle}" />
+        </VerticalStackLayout>
 
-        <Label x:Name="EmptyStateLabel" 
-               Grid.Row="1" 
-               Text="Your collection is empty. Go find some sleep inspiration!"
-               HorizontalOptions="Center" 
-               VerticalOptions="Center" 
-               TextColor="Gray" 
-               IsVisible="False"/>
-
-        <CollectionView x:Name="FavoritesCollectionView" 
-                        Grid.Row="1" 
-                        Margin="15,0"
+        <CollectionView x:Name="FavoritesCollectionView"
+                        Grid.Row="1"
+                        Margin="20,0,20,24"
                         SelectionMode="Single"
                         SelectionChanged="OnProductSelected">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Border Stroke="Gray" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10" Margin="0,0,0,15">
-                        <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="15">
-
-                            <Border Grid.Column="0" Stroke="Gray" StrokeThickness="1" HeightRequest="80" WidthRequest="80">
-                                <Image Source="{Binding ThumbnailUrl}" Aspect="AspectFill"/>
+                <DataTemplate x:DataType="local:Product">
+                    <Border Style="{StaticResource FlatSurfaceStyle}" Padding="10" Margin="0,0,0,10">
+                        <Grid ColumnDefinitions="96,*,Auto" ColumnSpacing="14">
+                            <Border StrokeThickness="0" StrokeShape="RoundRectangle 14" HeightRequest="96">
+                                <Image Source="{Binding ThumbnailUrl}"
+                                       Aspect="AspectFill"
+                                       SemanticProperties.Description="{Binding Name}" />
                             </Border>
-
-                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="5">
-                                <Label Text="{Binding Name}" FontAttributes="Bold" FontSize="16" TextColor="Black"/>
-                                <Label Text="{Binding Category}" FontSize="12" TextColor="Gray"/>
-                                <Label Text="{Binding Price}" FontSize="14" TextColor="#2DE2E6" FontAttributes="Bold"/>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                                <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" />
+                                <Label Text="{Binding Category}" Style="{StaticResource CaptionStyle}" />
+                                <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
                             </VerticalStackLayout>
-
                             <Button Grid.Column="2"
-                                    Text="一" 
-                                    FontSize="18"
-                                    FontAttributes="Bold"
-                                    TextColor="#2DE2E6"
-                                    BackgroundColor="Transparent"
-                                    BorderColor="#2DE2E6"
-                                    BorderWidth="1"
-                                    CornerRadius="20"
-                                    HeightRequest="40" 
-                                    WidthRequest="40"
-                                    VerticalOptions="End"
+                                    Text="Remove"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Padding="14,8"
+                                    VerticalOptions="Center"
                                     Clicked="OnRemoveClicked"
                                     CommandParameter="{Binding .}" />
                         </Grid>
@@ -54,5 +45,23 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
+        <VerticalStackLayout x:Name="EmptyStateLabel"
+                             Grid.Row="1"
+                             IsVisible="False"
+                             VerticalOptions="Center"
+                             Padding="32"
+                             Spacing="8">
+            <Border Style="{StaticResource FlatSurfaceStyle}"
+                    HeightRequest="88"
+                    WidthRequest="88"
+                    Padding="20"
+                    HorizontalOptions="Center">
+                <Image Source="collect_off.png"
+                       Aspect="AspectFit"
+                       SemanticProperties.Description="Empty saved list" />
+            </Border>
+            <Label Text="Your shortlist is empty" Style="{StaticResource SectionTitleStyle}" HorizontalTextAlignment="Center" Margin="0,10,0,0" />
+            <Label Text="Save a product from its detail page and it will appear here." Style="{StaticResource BodyStyle}" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
     </Grid>
-</ContentPage>  
+</ContentPage>

@@ -1,33 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SleepHaven.ProductDetailPage"
-             Shell.TabBarIsVisible="True"  Title="Product Detail"
-             BackgroundColor="White">
+<ContentPage
+    x:Class="SleepHaven.ProductDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Product detail"
+    Shell.TabBarIsVisible="True">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem x:Name="FavoriteToolbarItem"
-                     Text="Collect"
+                     Text="Save"
                      IconImageSource="collect_off.png"
                      Clicked="OnFavoriteClicked" />
     </ContentPage.ToolbarItems>
 
     <Grid x:Name="ContentGrid">
-
-        <Image x:Name="ProductImage" BackgroundColor="#F5F5F5" Aspect="AspectFit"/>
+        <Border x:Name="ImageFrame"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 16"
+                Margin="16">
+            <Image x:Name="ProductImage" Aspect="AspectFill" />
+        </Border>
 
         <ScrollView x:Name="TextScrollView">
-            <VerticalStackLayout Padding="20" Spacing="15">
-                <Label x:Name="CategoryLabel" FontSize="14" TextColor="Gray" />
-                <Label x:Name="NameLabel" FontSize="24" FontAttributes="Bold" TextColor="#333333" />
-                <Label x:Name="PriceLabel" FontSize="22" TextColor="#2DE2E6" FontAttributes="Bold" />
+            <VerticalStackLayout Padding="24,20,24,36" Spacing="14">
+                <Label x:Name="CategoryLabel" Style="{StaticResource CaptionStyle}" />
+                <Label x:Name="NameLabel" Style="{StaticResource DisplayTitleStyle}" />
+                <Label x:Name="PriceLabel" Style="{StaticResource PriceStyle}" FontSize="22" />
 
-                <BoxView HeightRequest="1" Color="LightGray" Margin="0,10" />
-                <Label Text="Description" FontAttributes="Bold" FontSize="16" />
-                <Label x:Name="DescLabel" FontSize="15" TextColor="#666666" LineHeight="1.5" />
+                <BoxView HeightRequest="1"
+                         Margin="0,8"
+                         BackgroundColor="{AppThemeBinding Light={StaticResource LightStroke}, Dark={StaticResource DarkStroke}}" />
+
+                <Label Text="About this piece" Style="{StaticResource SectionTitleStyle}" />
+                <Label x:Name="DescLabel" Style="{StaticResource BodyStyle}" />
             </VerticalStackLayout>
         </ScrollView>
-
     </Grid>
-
 </ContentPage>

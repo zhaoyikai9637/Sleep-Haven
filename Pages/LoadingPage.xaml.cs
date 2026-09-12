@@ -1,34 +1,24 @@
-﻿using SleepHaven;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace SleepHaven;
 
 public partial class LoadingPage : ContentPage
 {
-    public LoadingPage()
-    {
-        InitializeComponent();
-    }
+    public LoadingPage() => InitializeComponent();
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await Task.Delay(3000);
 
-        if (Application.Current != null)
+        if (MotionPreferences.AreAnimationsEnabled)
         {
-            // Attempt to obtain the main window of the current application
-            // Usually, there is only one window on mobile devices, so accessing Windows[0] is safe
-            // Robustness: First, check if there is anything in the Windows list
-            if (Application.Current.Windows.Count > 0)
-            {
-                var currentWindow = Application.Current.Windows[0];
+            LoadingStatus.Opacity = 0.35;
+            await LoadingStatus.FadeToAsync(1, 420, Easing.CubicOut);
+        }
 
-                // Modify the page of the window
-                currentWindow.Page = new AppShell();
-            }
+        await Task.Delay(700);
+
+        if (Application.Current?.Windows.FirstOrDefault() is { } window)
+        {
+            window.Page = new AppShell();
         }
     }
 }

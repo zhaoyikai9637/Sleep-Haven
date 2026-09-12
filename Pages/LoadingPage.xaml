@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SleepHaven.LoadingPage"
-             Shell.NavBarIsVisible="False">
-    <ContentPage.Background>
-        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#afeeee" Offset="0.1" />
-            <GradientStop Color="#00498f" Offset="1.0" />
-        </LinearGradientBrush>
-    </ContentPage.Background>
+<ContentPage
+    x:Class="SleepHaven.LoadingPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False">
 
-    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
-        <Label Text="SleepHaven"
-           FontFamily="Helvetica"
-           FontSize="28"
-           FontAttributes="Bold, Italic"
-           TextColor="Black"
-           LineHeight="1.4"
-           HorizontalOptions="Start" />
-        <Label Text="find your sleep"
-           FontFamily="OpenSansSemibold"
-           FontSize="20"
-           FontAttributes="Italic"
-           TextColor="Black"
-           LineHeight="1.4"
-           Margin="60,0,0,0" 
-           HorizontalOptions="Start" />
+    <Grid>
+        <Image Source="selina_bedroom.png"
+               Aspect="AspectFill"
+               SemanticProperties.Description="A softly lit bedroom prepared for rest" />
+        <BoxView Color="#B50E1413" />
 
-        <ActivityIndicator IsRunning="True" Color="Black" Margin="0,50,0,0" HorizontalOptions="Center"/>
-    </VerticalStackLayout>
+        <Grid Padding="32" RowDefinitions="*,Auto">
+            <VerticalStackLayout VerticalOptions="Center" Spacing="8">
+                <Label Text="SleepHaven"
+                       FontFamily="OpenSansSemibold"
+                       FontSize="36"
+                       TextColor="#F7FAF9" />
+                <Label Text="Rest begins with the right materials."
+                       FontFamily="OpenSansRegular"
+                       FontSize="16"
+                       TextColor="#D7E3DF" />
+            </VerticalStackLayout>
+
+            <Label x:Name="LoadingStatus"
+                   Grid.Row="1"
+                   Text="Preparing your collection"
+                   FontFamily="OpenSansSemibold"
+                   FontSize="13"
+                   TextColor="#D7E3DF"
+                   Margin="0,0,0,16" />
+        </Grid>
+    </Grid>
 </ContentPage>
