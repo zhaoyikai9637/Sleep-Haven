@@ -136,7 +136,7 @@
                             <BoxView HeightRequest="70" Color="{AppThemeBinding Light={StaticResource LightSurfaceMuted}, Dark={StaticResource DarkSurfaceMuted}}" />
                             <BoxView HeightRequest="70" Color="{AppThemeBinding Light={StaticResource LightSurfaceMuted}, Dark={StaticResource DarkSurfaceMuted}}" />
                         </VerticalStackLayout>
-                        <VerticalStackLayout x:Name="SeasonProductsLayout" Grid.Row="1" Spacing="0" Margin="0,12,0,0" IsVisible="False" BindableLayout.ItemsSource="{Binding ActiveSeasonProducts}">
+                        <VerticalStackLayout x:Name="SeasonProductsLayout" x:DataType="local:HomePage" Grid.Row="1" Spacing="0" Margin="0,12,0,0" IsVisible="False" BindableLayout.ItemsSource="{Binding ActiveSeasonProducts}">
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate x:DataType="local:Product">
                                     <Grid Padding="0,10" ColumnDefinitions="96,*" ColumnSpacing="14">
