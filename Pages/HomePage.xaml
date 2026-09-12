@@ -28,6 +28,8 @@
                     <Grid x:Name="HeroStage">
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnCurrentHeroTapped" />
+                            <SwipeGestureRecognizer Direction="Left" Swiped="OnHeroSwiped" />
+                            <SwipeGestureRecognizer Direction="Right" Swiped="OnHeroSwiped" />
                         </Grid.GestureRecognizers>
                         <Image x:Name="HeroImage" Aspect="AspectFill" />
                         <BoxView Color="#A9061B36" />

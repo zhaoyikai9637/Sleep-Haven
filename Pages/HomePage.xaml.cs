@@ -90,6 +90,18 @@ public partial class HomePage : ContentPage
         MoveHeroBy(1);
     }
 
+    private void OnHeroSwiped(object sender, SwipedEventArgs e)
+    {
+        if (e.Direction == SwipeDirection.Left)
+        {
+            MoveHeroBy(1);
+        }
+        else if (e.Direction == SwipeDirection.Right)
+        {
+            MoveHeroBy(-1);
+        }
+    }
+
     private void MoveHeroBy(int offset)
     {
         if (HeroItems.Count == 0)
