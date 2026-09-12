@@ -78,58 +78,81 @@
                     </Grid>
                 </Border>
 
-                <Grid Margin="24,34,24,16" ColumnDefinitions="Auto,*" ColumnSpacing="16">
-                    <Label Text="04" TextColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" FontFamily="OpenSansSemibold" FontSize="36" />
-                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
-                        <Label Text="SEASONAL EDITS" Style="{StaticResource SignalLabelStyle}" />
-                        <Label Text="Comfort changes with the air." Style="{StaticResource SectionTitleStyle}" />
-                    </VerticalStackLayout>
-                </Grid>
+                <VerticalStackLayout Margin="20,32,20,36" Spacing="0">
+                    <Label Text="Seasonal comfort" Style="{StaticResource SectionTitleStyle}" Margin="4,0,0,16" />
 
-                <VerticalStackLayout x:Name="SeasonLoadingState" Margin="20,0" Spacing="8">
-                    <BoxView HeightRequest="64" Color="{AppThemeBinding Light={StaticResource LightSurfaceMuted}, Dark={StaticResource DarkSurfaceMuted}}" />
-                    <BoxView HeightRequest="64" Color="{AppThemeBinding Light={StaticResource LightSurfaceMuted}, Dark={StaticResource DarkSurfaceMuted}}" />
-                </VerticalStackLayout>
+                    <Grid x:Name="SeasonStage" HeightRequest="430" Padding="20,18" RowDefinitions="Auto,*,Auto" RowSpacing="14">
+                        <Grid.GestureRecognizers>
+                            <SwipeGestureRecognizer Direction="Left" Swiped="OnSeasonSwiped" />
+                            <SwipeGestureRecognizer Direction="Right" Swiped="OnSeasonSwiped" />
+                        </Grid.GestureRecognizers>
 
-                <VerticalStackLayout x:Name="SeasonSectionsLayout" Margin="20,0,20,32" Spacing="8" IsVisible="False" BindableLayout.ItemsSource="{Binding SeasonSections}">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="local:SeasonSection">
-                            <Border Style="{StaticResource CardStyle}" Padding="0">
-                                <VerticalStackLayout Spacing="0">
-                                    <Grid Padding="18,14" ColumnDefinitions="6,*,Auto" ColumnSpacing="14">
-                                        <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnSeasonTapped" CommandParameter="{Binding .}" />
-                                        </Grid.GestureRecognizers>
-                                        <BoxView Color="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" />
-                                        <VerticalStackLayout Grid.Column="1" Spacing="2">
-                                            <Label Text="{Binding Key, StringFormat='EDIT / {0}'}" Style="{StaticResource SignalLabelStyle}" />
-                                            <Label Text="{Binding Title}" Style="{StaticResource ProductNameStyle}" />
-                                            <Label Text="{Binding Summary}" Style="{StaticResource CaptionStyle}" />
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                            <VerticalStackLayout Spacing="3">
+                                <Label x:Name="SeasonSequenceLabel" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.4" />
+                                <Label x:Name="SeasonTitleLabel" FontFamily="OpenSansSemibold" FontSize="36" LineHeight="1.05" />
+                                <Label x:Name="SeasonSummaryLabel" FontSize="13" MaxLines="2" />
+                            </VerticalStackLayout>
+                            <Label x:Name="SeasonCountLabel" Grid.Column="1" FontFamily="OpenSansSemibold" FontSize="12" VerticalOptions="Start" />
+                        </Grid>
+
+                        <Grid x:Name="SeasonPreviewGrid" Grid.Row="1" ColumnDefinitions=".18*,.64*,.18*" ColumnSpacing="12">
+                            <Grid x:Name="PreviousSeasonPreview" Grid.Column="0" Opacity="0.62">
+                                <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnPreviousSeasonTapped" /></Grid.GestureRecognizers>
+                                <Image x:Name="PreviousSeasonImage" Aspect="AspectFill" />
+                                <BoxView x:Name="PreviousSeasonTint" Opacity="0.42" />
+                                <Label x:Name="PreviousSeasonLabel" Margin="8" Padding="6,3" FontFamily="OpenSansSemibold" FontSize="11" HorizontalOptions="Start" VerticalOptions="End" />
+                            </Grid>
+                            <Grid Grid.Column="1">
+                                <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnSeasonFeatureTapped" /></Grid.GestureRecognizers>
+                                <Image x:Name="CurrentSeasonImage" Aspect="AspectFill" />
+                                <BoxView Color="#C0061B36" HeightRequest="72" VerticalOptions="End" />
+                                <Label x:Name="SeasonFeatureLabel" Margin="16,0,16,14" TextColor="White" FontFamily="OpenSansSemibold" FontSize="16" MaxLines="2" VerticalOptions="End" />
+                            </Grid>
+                            <Grid x:Name="NextSeasonPreview" Grid.Column="2" Opacity="0.62">
+                                <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnNextSeasonTapped" /></Grid.GestureRecognizers>
+                                <Image x:Name="NextSeasonImage" Aspect="AspectFill" />
+                                <BoxView x:Name="NextSeasonTint" Opacity="0.42" />
+                                <Label x:Name="NextSeasonLabel" Margin="8" Padding="6,3" FontFamily="OpenSansSemibold" FontSize="11" HorizontalOptions="Start" VerticalOptions="End" />
+                            </Grid>
+                        </Grid>
+
+                        <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <Button x:Name="PreviousSeasonButton" Text="PREVIOUS" Style="{StaticResource SecondaryButtonStyle}" Clicked="OnPreviousSeasonClicked" />
+                            <Label x:Name="SeasonPositionLabel" Grid.Column="1" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.1" HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Button x:Name="NextSeasonButton" Grid.Column="2" Text="NEXT" Style="{StaticResource SecondaryButtonStyle}" Clicked="OnNextSeasonClicked" />
+                        </Grid>
+                    </Grid>
+
+                    <Grid x:Name="SeasonProductArea" Padding="22,22,22,14" RowDefinitions="Auto,Auto">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <VerticalStackLayout Spacing="3">
+                                <Label x:Name="SeasonProductsKicker" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.2" />
+                                <Label Text="Explore this season" Style="{StaticResource SectionTitleStyle}" />
+                            </VerticalStackLayout>
+                            <Label x:Name="SeasonProductCountLabel" Grid.Column="1" Style="{StaticResource CaptionStyle}" VerticalOptions="End" />
+                        </Grid>
+                        <VerticalStackLayout x:Name="SeasonLoadingState" Grid.Row="1" Spacing="8" Margin="0,14,0,0">
+                            <BoxView HeightRequest="70" Color="{AppThemeBinding Light={StaticResource LightSurfaceMuted}, Dark={StaticResource DarkSurfaceMuted}}" />
+                            <BoxView HeightRequest="70" Color="{AppThemeBinding Light={StaticResource LightSurfaceMuted}, Dark={StaticResource DarkSurfaceMuted}}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout x:Name="SeasonProductsLayout" Grid.Row="1" Spacing="0" Margin="0,12,0,0" IsVisible="False" BindableLayout.ItemsSource="{Binding ActiveSeasonProducts}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="local:Product">
+                                    <Grid Padding="0,10" ColumnDefinitions="96,*" ColumnSpacing="14">
+                                        <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="{Binding Id}" /></Grid.GestureRecognizers>
+                                        <Image Source="{Binding ThumbnailUrl}" HeightRequest="86" Aspect="AspectFill" SemanticProperties.Description="{Binding Name}" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                            <Label Text="{Binding Category}" Style="{StaticResource CaptionStyle}" />
+                                            <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" />
+                                            <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
                                         </VerticalStackLayout>
-                                        <Label Grid.Column="2" Text="{Binding ToggleSymbol}" FontFamily="OpenSansSemibold" FontSize="22" TextColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" VerticalOptions="Center" />
                                     </Grid>
-
-                                    <VerticalStackLayout IsVisible="{Binding IsExpanded}" Padding="18,4,18,16" Spacing="0" BindableLayout.ItemsSource="{Binding Products}">
-                                        <BindableLayout.ItemTemplate>
-                                            <DataTemplate x:DataType="local:Product">
-                                                <Grid Padding="0,12" ColumnDefinitions="104,*" ColumnSpacing="16">
-                                                    <Grid.GestureRecognizers>
-                                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="{Binding Id}" />
-                                                    </Grid.GestureRecognizers>
-                                                    <Image Source="{Binding ThumbnailUrl}" HeightRequest="92" Aspect="AspectFill" SemanticProperties.Description="{Binding Name}" />
-                                                    <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-                                                        <Label Text="{Binding Category}" Style="{StaticResource SignalLabelStyle}" />
-                                                        <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" />
-                                                        <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
-                                                    </VerticalStackLayout>
-                                                </Grid>
-                                            </DataTemplate>
-                                        </BindableLayout.ItemTemplate>
-                                    </VerticalStackLayout>
-                                </VerticalStackLayout>
-                            </Border>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                        <Label x:Name="SeasonEmptyState" Grid.Row="1" Text="New pieces for this season are on the way." Style="{StaticResource BodyStyle}" Margin="0,18,0,0" IsVisible="False" />
+                    </Grid>
                 </VerticalStackLayout>
             </VerticalStackLayout>
         </ScrollView>

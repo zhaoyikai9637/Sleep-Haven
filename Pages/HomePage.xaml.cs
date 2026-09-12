@@ -9,6 +9,19 @@ public partial class HomePage : ContentPage
     private bool _isFirstLoad = true;
     private bool _hasAnimated;
     private int _heroIndex;
+    private int _seasonIndex;
+    private bool _hasThemeHandler;
+    private bool? _isCompactSeasonLayout;
+    private bool _hasManualSeasonSelection;
+    private int _weatherRequestVersion;
+
+    private static readonly SeasonPalette[] SeasonPalettes =
+    [
+        new("Spring", "#DCE9DF", "#213F34", "#456955", "#F1F6F0", "#213B32", "#1B3029", "#E5F1E8"),
+        new("Summer", "#D8E9EC", "#1D3B49", "#416675", "#EFF6F7", "#1C3640", "#19313A", "#E0EFF1"),
+        new("Autumn", "#E8DED4", "#48382F", "#705844", "#F5F0E9", "#3E312C", "#382C27", "#F0E5D8"),
+        new("Winter", "#DDE3EB", "#293950", "#4E637D", "#F0F3F7", "#26364B", "#202D40", "#E5ECF3")
+    ];
 
     private IReadOnlyList<CarouselItem> HeroItems { get; } =
     [
@@ -19,6 +32,7 @@ public partial class HomePage : ContentPage
 
     public ObservableCollection<Product> SearchSuggestions { get; } = [];
     public ObservableCollection<SeasonSection> SeasonSections { get; } = [];
+    public ObservableCollection<Product> ActiveSeasonProducts { get; } = [];
 
     public HomePage()
     {
@@ -26,11 +40,17 @@ public partial class HomePage : ContentPage
         SuggestionsCollectionView.ItemsSource = SearchSuggestions;
         BindingContext = this;
         RenderHero();
+        SeasonStage.IsVisible = false;
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        if (!_hasThemeHandler && Application.Current is { } app)
+        {
+            app.RequestedThemeChanged += OnRequestedThemeChanged;
+            _hasThemeHandler = true;
+        }
 
         if (SeasonSections.Count == 0)
         {
@@ -46,6 +66,19 @@ public partial class HomePage : ContentPage
         await AnimateEntryAsync();
     }
 
+    protected override void OnDisappearing()
+    {
+        if (_hasThemeHandler && Application.Current is { } app)
+        {
+            app.RequestedThemeChanged -= OnRequestedThemeChanged;
+            _hasThemeHandler = false;
+        }
+
+        base.OnDisappearing();
+    }
+
+    private void OnRequestedThemeChanged(object? sender, AppThemeChangedEventArgs e) => RenderSeason();
+
     private async Task LoadSeasonSectionsAsync()
     {
         var products = await _databaseService.GetAllProductsAsync();
@@ -60,11 +93,12 @@ public partial class HomePage : ContentPage
         foreach (var definition in definitions)
         {
             var matches = products.Where(product => product.Category.Contains(definition.Key, StringComparison.OrdinalIgnoreCase));
-            SeasonSections.Add(new SeasonSection(definition.Key, definition.Title, definition.Summary, matches, definition.Key == "Spring"));
+            SeasonSections.Add(new SeasonSection(definition.Key, definition.Title, definition.Summary, matches));
         }
 
         SeasonLoadingState.IsVisible = false;
-        SeasonSectionsLayout.IsVisible = true;
+        SeasonProductsLayout.IsVisible = true;
+        RenderSeason();
     }
 
     private async Task AnimateEntryAsync()
@@ -193,12 +227,101 @@ public partial class HomePage : ContentPage
         }
     }
 
-    private void OnSeasonTapped(object sender, TappedEventArgs e)
+    private void OnPreviousSeasonClicked(object sender, EventArgs e) => MoveSeasonBy(-1);
+    private void OnNextSeasonClicked(object sender, EventArgs e) => MoveSeasonBy(1);
+    private void OnPreviousSeasonTapped(object sender, TappedEventArgs e) => MoveSeasonBy(-1);
+    private void OnNextSeasonTapped(object sender, TappedEventArgs e) => MoveSeasonBy(1);
+
+    private void OnSeasonSwiped(object sender, SwipedEventArgs e)
     {
-        if (e.Parameter is SeasonSection season)
+        if (e.Direction == SwipeDirection.Left) MoveSeasonBy(1);
+        else if (e.Direction == SwipeDirection.Right) MoveSeasonBy(-1);
+    }
+
+    private void MoveSeasonBy(int offset)
+    {
+        if (SeasonSections.Count == 0) return;
+        _hasManualSeasonSelection = true;
+        _seasonIndex = (_seasonIndex + offset + SeasonSections.Count) % SeasonSections.Count;
+        RenderSeason();
+    }
+
+    protected override void OnSizeAllocated(double width, double height)
+    {
+        base.OnSizeAllocated(width, height);
+        var compact = width < 760;
+        if (_isCompactSeasonLayout == compact) return;
+
+        _isCompactSeasonLayout = compact;
+        PreviousSeasonPreview.IsVisible = !compact;
+        NextSeasonPreview.IsVisible = !compact;
+        SeasonPreviewGrid.ColumnDefinitions[0].Width = new GridLength(compact ? 0 : 18, GridUnitType.Star);
+        SeasonPreviewGrid.ColumnDefinitions[1].Width = new GridLength(compact ? 1 : 64, GridUnitType.Star);
+        SeasonPreviewGrid.ColumnDefinitions[2].Width = new GridLength(compact ? 0 : 18, GridUnitType.Star);
+        SeasonStage.HeightRequest = compact ? 390 : 430;
+    }
+
+    private async void OnSeasonFeatureTapped(object sender, TappedEventArgs e)
+    {
+        if (SeasonSections.Count == 0 || SeasonSections[_seasonIndex].Products.FirstOrDefault() is not { } product) return;
+        await Navigation.PushAsync(new ProductDetailPage(product));
+    }
+
+    private void RenderSeason()
+    {
+        if (SeasonSections.Count == 0) return;
+
+        var current = SeasonSections[_seasonIndex];
+        var previous = SeasonSections[(_seasonIndex - 1 + SeasonSections.Count) % SeasonSections.Count];
+        var next = SeasonSections[(_seasonIndex + 1) % SeasonSections.Count];
+        var palette = SeasonPalettes.First(p => p.Key == current.Key);
+        var isDark = Application.Current?.RequestedTheme == AppTheme.Dark;
+        var background = Color.FromArgb(isDark ? palette.DarkBackground : palette.LightBackground);
+        var foreground = Color.FromArgb(isDark ? "#F0F5F4" : palette.LightForeground);
+        var muted = Color.FromArgb(isDark ? "#C5D2D2" : palette.LightAccent);
+        var accent = Color.FromArgb(isDark ? palette.DarkAccent : palette.LightAccent);
+        var productBackground = Color.FromArgb(isDark ? palette.DarkSurface : palette.LightSurface);
+
+        SeasonStage.IsVisible = true;
+        SeasonStage.BackgroundColor = background;
+        SeasonProductArea.BackgroundColor = productBackground;
+        SeasonSequenceLabel.Text = "THE SEASONAL EDIT";
+        SeasonSequenceLabel.TextColor = accent;
+        SeasonTitleLabel.Text = current.Key;
+        SeasonTitleLabel.TextColor = foreground;
+        SeasonSummaryLabel.Text = current.Summary;
+        SeasonSummaryLabel.TextColor = muted;
+        SeasonCountLabel.Text = $"{current.Products.Count} PIECES";
+        SeasonCountLabel.TextColor = foreground;
+        SeasonPositionLabel.Text = $"{_seasonIndex + 1} OF {SeasonSections.Count}";
+        SeasonPositionLabel.TextColor = muted;
+        SeasonProductsKicker.Text = $"{current.Key.ToUpperInvariant()} COLLECTION";
+        SeasonProductsKicker.TextColor = accent;
+        SeasonProductCountLabel.Text = $"{current.Products.Count} pieces";
+        SeasonEmptyState.IsVisible = current.Products.Count == 0;
+        foreach (var button in new[] { PreviousSeasonButton, NextSeasonButton })
         {
-            season.IsExpanded = !season.IsExpanded;
+            button.BackgroundColor = accent;
+            button.TextColor = isDark ? Color.FromArgb(palette.DarkBackground) : Colors.White;
         }
+
+        PreviousSeasonLabel.Text = previous.Key.ToUpperInvariant();
+        PreviousSeasonLabel.TextColor = foreground;
+        PreviousSeasonLabel.BackgroundColor = background;
+        PreviousSeasonTint.Color = background;
+        PreviousSeasonImage.Source = previous.Products.FirstOrDefault()?.LandscapeUrl;
+        NextSeasonLabel.Text = next.Key.ToUpperInvariant();
+        NextSeasonLabel.TextColor = foreground;
+        NextSeasonLabel.BackgroundColor = background;
+        NextSeasonTint.Color = background;
+        NextSeasonImage.Source = next.Products.FirstOrDefault()?.LandscapeUrl;
+
+        var feature = current.Products.FirstOrDefault();
+        CurrentSeasonImage.Source = feature?.LandscapeUrl;
+        SeasonFeatureLabel.Text = feature?.Name ?? "New pieces coming soon";
+        SemanticProperties.SetDescription(CurrentSeasonImage, feature?.Name ?? current.Title);
+        ActiveSeasonProducts.Clear();
+        foreach (var product in current.Products) ActiveSeasonProducts.Add(product);
     }
 
     private async void OnProductTapped(object sender, TappedEventArgs e)
@@ -220,6 +343,7 @@ public partial class HomePage : ContentPage
 
     private async Task SelectCityAsync(string cityName)
     {
+        _hasManualSeasonSelection = false;
         SetCityButtonState(BtnSingapore, cityName == "Singapore");
         SetCityButtonState(BtnQingdao, cityName == "Qingdao");
         await FetchWeatherAndRecommendAsync(cityName);
@@ -239,6 +363,7 @@ public partial class HomePage : ContentPage
 
     private async Task FetchWeatherAndRecommendAsync(string cityName)
     {
+        var requestVersion = ++_weatherRequestVersion;
         WeatherRecommendationCard.IsVisible = true;
         WeatherTitleLabel.Text = $"Reading {cityName}'s night";
         WeatherBodyLabel.Text = "Selecting a comfortable material profile.";
@@ -246,10 +371,11 @@ public partial class HomePage : ContentPage
         try
         {
             var weather = await _weatherService.GetCurrentAsync(cityName);
-            ApplyWeatherRecommendation(weather);
+            if (requestVersion == _weatherRequestVersion) ApplyWeatherRecommendation(weather);
         }
         catch
         {
+            if (requestVersion != _weatherRequestVersion) return;
             WeatherTitleLabel.Text = "Weather signal unavailable";
             WeatherBodyLabel.Text = "Every seasonal edit remains available below.";
         }
@@ -258,9 +384,11 @@ public partial class HomePage : ContentPage
     private void ApplyWeatherRecommendation(WeatherSnapshot weather)
     {
         var targetSeason = GetRecommendedSeason(weather);
-        foreach (var season in SeasonSections)
+        var recommendedIndex = SeasonSections.ToList().FindIndex(season => season.Key == targetSeason);
+        if (recommendedIndex >= 0 && !_hasManualSeasonSelection)
         {
-            season.IsExpanded = season.Key == targetSeason;
+            _seasonIndex = recommendedIndex;
+            RenderSeason();
         }
 
         WeatherTitleLabel.Text = $"{weather.CityName} / {weather.Temperature:F1}°C";
@@ -296,4 +424,14 @@ public partial class HomePage : ContentPage
             target.Add(item);
         }
     }
+
+    private sealed record SeasonPalette(
+        string Key,
+        string LightBackground,
+        string LightForeground,
+        string LightAccent,
+        string LightSurface,
+        string DarkBackground,
+        string DarkSurface,
+        string DarkAccent);
 }
