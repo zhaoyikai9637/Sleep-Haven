@@ -370,7 +370,7 @@ public partial class HomePage : ContentPage
 
         try
         {
-            var weather = await _weatherService.GetCurrentAsync(cityName);
+            var weather = await _weatherService.GetComfortForecastAsync(cityName);
             if (requestVersion == _weatherRequestVersion) ApplyWeatherRecommendation(weather);
         }
         catch
@@ -383,7 +383,7 @@ public partial class HomePage : ContentPage
 
     private void ApplyWeatherRecommendation(WeatherSnapshot weather)
     {
-        var targetSeason = GetRecommendedSeason(weather);
+        var targetSeason = WeatherService.GetRecommendedSeason(weather);
         var recommendedIndex = SeasonSections.ToList().FindIndex(season => season.Key == targetSeason);
         if (recommendedIndex >= 0 && !_hasManualSeasonSelection)
         {
@@ -391,29 +391,15 @@ public partial class HomePage : ContentPage
             RenderSeason();
         }
 
-        WeatherTitleLabel.Text = $"{weather.CityName} / {weather.Temperature:F1}°C";
-        WeatherBodyLabel.Text = targetSeason switch
+        WeatherTitleLabel.Text = $"{weather.CityName} / Night low {weather.NightLowTemperature:F1}°C";
+        var advice = targetSeason switch
         {
-            "Summer" => $"Humidity is {weather.Humidity}%. Begin with light, breathable layers.",
-            "Autumn" => "Rain is in the forecast. Begin with balanced, cosy layers.",
-            "Winter" => "The air is cold. Begin with insulating quilts and bedding.",
-            _ => "The weather is mild. Begin with breathable spring layers."
+            "Summer" => "Choose light, breathable layers.",
+            "Autumn" => "Choose balanced layers for cooler nights.",
+            "Winter" => "Choose insulating quilts and warmer bedding.",
+            _ => "Choose breathable layers with gentle warmth."
         };
-    }
-
-    private static string GetRecommendedSeason(WeatherSnapshot weather)
-    {
-        if (weather.CityName == "Singapore")
-        {
-            return weather.IsRainy ? "Autumn" : "Summer";
-        }
-
-        if (weather.Temperature < 10)
-        {
-            return "Winter";
-        }
-
-        return weather.Temperature <= 25 ? "Spring" : "Summer";
+        WeatherBodyLabel.Text = $"Now {weather.Temperature:F1}°C. {targetSeason} edit: {advice}";
     }
 
     private static void ReplaceItems<T>(ObservableCollection<T> target, IEnumerable<T> items)
