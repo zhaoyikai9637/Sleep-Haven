@@ -8,8 +8,9 @@ public partial class HomePage : ContentPage
     private readonly WeatherService _weatherService = new(new HttpClient());
     private bool _isFirstLoad = true;
     private bool _hasAnimated;
+    private int _heroIndex;
 
-    public ObservableCollection<CarouselItem> CarouselItems { get; } =
+    private IReadOnlyList<CarouselItem> HeroItems { get; } =
     [
         new("p012", "restful_recovery_memory_pillow_bedroom.png", "01", "SUPPORT / RECOVERY", "Restful Recovery Memory Pillow", "Pressure-aware support for slower, deeper nights."),
         new("p007", "mulberrysilk_summerquilt_bedroom.png", "02", "LIGHT / BREATHABLE", "Mulberry Silk Summer Quilt", "A weightless layer selected for warm, humid air."),
@@ -24,6 +25,7 @@ public partial class HomePage : ContentPage
         InitializeComponent();
         SuggestionsCollectionView.ItemsSource = SearchSuggestions;
         BindingContext = this;
+        RenderHero();
     }
 
     protected override async void OnAppearing()
@@ -90,15 +92,46 @@ public partial class HomePage : ContentPage
 
     private void MoveHeroBy(int offset)
     {
-        if (CarouselItems.Count == 0)
+        if (HeroItems.Count == 0)
         {
             return;
         }
 
-        var current = Math.Clamp(BannerCarousel.Position, 0, CarouselItems.Count - 1);
-        var target = (current + offset + CarouselItems.Count) % CarouselItems.Count;
-        var crossesBoundary = Math.Abs(target - current) > 1;
-        BannerCarousel.ScrollTo(target, animate: !crossesBoundary);
+        _heroIndex = (_heroIndex + offset + HeroItems.Count) % HeroItems.Count;
+        RenderHero();
+    }
+
+    private void RenderHero()
+    {
+        if (HeroItems.Count == 0)
+        {
+            HeroStage.IsVisible = false;
+            return;
+        }
+
+        HeroStage.IsVisible = true;
+        var hero = HeroItems[_heroIndex];
+        HeroImage.Source = hero.ImageUrl;
+        SemanticProperties.SetDescription(HeroImage, hero.Title);
+        HeroNumberLabel.Text = hero.Number;
+        HeroEyebrowLabel.Text = hero.Eyebrow;
+        HeroTitleLabel.Text = hero.Title;
+        HeroSummaryLabel.Text = hero.Summary;
+        HeroPositionLabel.Text = $"{_heroIndex + 1:00} / {HeroItems.Count:00}";
+    }
+
+    private async void OnCurrentHeroTapped(object sender, TappedEventArgs e)
+    {
+        if (HeroItems.Count == 0)
+        {
+            return;
+        }
+
+        var product = await _databaseService.GetProductByIdAsync(HeroItems[_heroIndex].Id);
+        if (product is not null)
+        {
+            await Navigation.PushAsync(new ProductDetailPage(product));
+        }
     }
 
     private async void OnSearchBarTextChanged(object sender, TextChangedEventArgs e)

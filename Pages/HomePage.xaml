@@ -25,38 +25,32 @@
         <ScrollView x:Name="MainContentScrollView" Grid.Row="2">
             <VerticalStackLayout x:Name="HomeContent" Spacing="0">
                 <Grid HeightRequest="320" BackgroundColor="{StaticResource AccentInk}">
-                    <CarouselView x:Name="BannerCarousel" ItemsSource="{Binding CarouselItems}" IndicatorView="HeroIndicator" Loop="True" IsBounceEnabled="True">
-                        <CarouselView.ItemTemplate>
-                            <DataTemplate x:DataType="local:CarouselItem">
-                                <Grid>
-                                    <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="{Binding Id}" />
-                                    </Grid.GestureRecognizers>
-                                    <Image Source="{Binding ImageUrl}" Aspect="AspectFill" SemanticProperties.Description="{Binding Title}" />
-                                    <BoxView Color="#A9061B36" />
-                                    <BoxView BackgroundColor="#BA0878F9" WidthRequest="360" HeightRequest="470" HorizontalOptions="Start" TranslationX="-160" Rotation="-13" />
-                                    <Grid Padding="26,24" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
-                                        <HorizontalStackLayout Spacing="12">
-                                            <Label Text="{Binding Number}" TextColor="#DDF2FF" FontFamily="OpenSansSemibold" FontSize="28" />
-                                            <BoxView WidthRequest="46" HeightRequest="2" Color="#DDF2FF" VerticalOptions="Center" />
-                                            <Label Text="{Binding Eyebrow}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.6" VerticalOptions="Center" />
-                                        </HorizontalStackLayout>
-                                        <VerticalStackLayout Grid.Row="2" Spacing="8" WidthRequest="330" HorizontalOptions="Start">
-                                            <Label Text="{Binding Title}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="30" LineHeight="1" MaxLines="2" />
-                                            <Label Text="{Binding Summary}" TextColor="#DDF2FF" FontSize="14" MaxLines="2" />
-                                            <Label Text="VIEW THE EDIT  /" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.4" Margin="0,5,0,0" />
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </Grid>
-                            </DataTemplate>
-                        </CarouselView.ItemTemplate>
-                    </CarouselView>
+                    <Grid x:Name="HeroStage">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCurrentHeroTapped" />
+                        </Grid.GestureRecognizers>
+                        <Image x:Name="HeroImage" Aspect="AspectFill" />
+                        <BoxView Color="#A9061B36" />
+                        <BoxView BackgroundColor="#BA0878F9" WidthRequest="360" HeightRequest="470" HorizontalOptions="Start" TranslationX="-160" Rotation="-13" />
+                        <Grid Padding="26,24" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
+                            <HorizontalStackLayout Spacing="12">
+                                <Label x:Name="HeroNumberLabel" TextColor="#DDF2FF" FontFamily="OpenSansSemibold" FontSize="28" />
+                                <BoxView WidthRequest="46" HeightRequest="2" Color="#DDF2FF" VerticalOptions="Center" />
+                                <Label x:Name="HeroEyebrowLabel" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.6" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                            <VerticalStackLayout Grid.Row="2" Spacing="8" WidthRequest="330" HorizontalOptions="Start">
+                                <Label x:Name="HeroTitleLabel" TextColor="White" FontFamily="OpenSansSemibold" FontSize="30" LineHeight="1" MaxLines="2" />
+                                <Label x:Name="HeroSummaryLabel" TextColor="#DDF2FF" FontSize="14" MaxLines="2" />
+                                <Label Text="VIEW THE EDIT  /" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.4" Margin="0,5,0,0" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Grid>
 
                     <HorizontalStackLayout Margin="0,0,22,20" Spacing="6" HorizontalOptions="End" VerticalOptions="End">
                         <Button Text="PREV" Style="{StaticResource HeroNavButtonStyle}" FontSize="10" Clicked="OnPreviousHeroClicked" />
                         <Button Text="NEXT" Style="{StaticResource HeroNavButtonStyle}" FontSize="10" Clicked="OnNextHeroClicked" />
                     </HorizontalStackLayout>
-                    <IndicatorView x:Name="HeroIndicator" Margin="26,0,0,22" HorizontalOptions="Start" VerticalOptions="End" />
+                    <Label x:Name="HeroPositionLabel" Margin="26,0,0,24" TextColor="White" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.4" HorizontalOptions="Start" VerticalOptions="End" />
                 </Grid>
 
                 <Grid Padding="24,16" ColumnDefinitions="*,1,*,1,*" ColumnSpacing="14" BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
