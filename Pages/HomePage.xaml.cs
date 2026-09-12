@@ -80,12 +80,25 @@ public partial class HomePage : ContentPage
 
     private void OnPreviousHeroClicked(object sender, EventArgs e)
     {
-        BannerCarousel.Position = BannerCarousel.Position <= 0 ? CarouselItems.Count - 1 : BannerCarousel.Position - 1;
+        MoveHeroBy(-1);
     }
 
     private void OnNextHeroClicked(object sender, EventArgs e)
     {
-        BannerCarousel.Position = (BannerCarousel.Position + 1) % CarouselItems.Count;
+        MoveHeroBy(1);
+    }
+
+    private void MoveHeroBy(int offset)
+    {
+        if (CarouselItems.Count == 0)
+        {
+            return;
+        }
+
+        var current = Math.Clamp(BannerCarousel.Position, 0, CarouselItems.Count - 1);
+        var target = (current + offset + CarouselItems.Count) % CarouselItems.Count;
+        var crossesBoundary = Math.Abs(target - current) > 1;
+        BannerCarousel.ScrollTo(target, animate: !crossesBoundary);
     }
 
     private async void OnSearchBarTextChanged(object sender, TextChangedEventArgs e)
