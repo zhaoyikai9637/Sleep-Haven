@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/zhaoyikai9637/Sleep-Haven/security
+    about: Do not publish vulnerability details in a public issue. Read SECURITY.md first.

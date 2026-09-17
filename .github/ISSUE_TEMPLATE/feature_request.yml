@@ -1,0 +1,45 @@
+name: Feature request
+description: Propose a scoped improvement backed by a user need.
+title: "[Feature]: "
+labels: [enhancement, needs-triage]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or user need
+      description: Describe who has the problem and why it matters without inventing adoption claims.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed outcome
+      description: Describe observable behaviour, not only a technical implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Primary area
+      options:
+        - Discover and seasonal recommendations
+        - Search and categories
+        - Product details and saved items
+        - Accessibility and localisation
+        - Build, release, or documentation
+        - Data model or external integration
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and the roadmap.
+          required: true
+        - label: I have not presented an unimplemented feature as current functionality.
+          required: true

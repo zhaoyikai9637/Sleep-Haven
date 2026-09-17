@@ -1,0 +1,68 @@
+name: Bug report
+description: Report a reproducible problem in SleepHaven.
+title: "[Bug]: "
+labels: [bug, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve SleepHaven. Do not include secrets, personal data, or vulnerability details.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: Release tag or full commit SHA where the problem occurs.
+      placeholder: v1.0.0 or 0123456789abcdef...
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Android
+        - Windows
+        - iOS
+        - Mac Catalyst
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Device and operating-system version
+      placeholder: HONOR model / MagicOS version, or Windows version
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      placeholder: Numbered steps from a clean launch.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs or screenshots
+      description: Remove tokens, file-system usernames, and other personal information before attaching evidence.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues for this problem.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true
