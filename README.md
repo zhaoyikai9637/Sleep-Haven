@@ -119,6 +119,8 @@ The evidence-based roadmap and issue-ready backlog are in [`docs/ROADMAP.md`](do
 
 The repository owner is currently the primary maintainer. Maintenance activity is visible in the public commit history. Adoption claims, download counts, merchant deployments, and testimonials are intentionally not stated without evidence. See [`docs/CODEX_OPEN_SOURCE_APPLICATION.md`](docs/CODEX_OPEN_SOURCE_APPLICATION.md) for a fact-checked application draft and its remaining evidence gaps.
 
-## License status
+## License
 
-No open-source license has been selected yet. Until a `LICENSE` file is added, the repository is publicly visible but does **not** grant general permission to copy, modify, or redistribute the code. The maintainer must choose a license and confirm rights to bundled product imagery before an open-source release. See [`docs/LICENSE_DECISION.md`](docs/LICENSE_DECISION.md).
+SleepHaven source code is available under the [MIT License](LICENSE), copyright 2026 Zhao Yikai.
+
+Bundled photographs, icons, fonts, and other non-code assets may have separate ownership or licence terms and are not automatically relicensed under MIT. See [`docs/ASSET_PROVENANCE.md`](docs/ASSET_PROVENANCE.md) before redistributing application assets.

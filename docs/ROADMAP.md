@@ -4,7 +4,7 @@ This roadmap describes intended work, not shipped functionality. Priorities may 
 
 ## Release blockers for v1.0.0
 
-- [ ] **Choose an open-source licence** after the rights holder reviews `LICENSE_DECISION.md`.
+- [x] **Choose an open-source licence.** MIT was selected by the rights holder on 17 September 2026; see `LICENSE_DECISION.md`.
 - [ ] **Document or replace every bundled image and font** using `ASSET_PROVENANCE.md`.
 - [ ] **Capture real Windows and Android screenshots** using `DEMO.md`.
 - [ ] **Run the signed APK on at least one physical ARM64 Android device** and record model, OS, install result, and demo results.

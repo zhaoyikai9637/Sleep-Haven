@@ -14,7 +14,7 @@ Snapshot date: **2026-09-17**
 - Forks: 0
 - Public releases: 0
 - Open issues: 0
-- Licence: none selected
+- Licence: MIT
 
 These values can change. Re-check the GitHub API immediately before applying.
 
@@ -34,7 +34,7 @@ These values can change. Re-check the GitHub API immediately before applying.
 
 ### Anything else we should know — 500 characters maximum
 
-> SleepHaven is early-stage and I do not claim broad adoption. As of 2026-09-17 the public repository has 11 commits, 18 stars, one visible contributor, no forks, and no releases. I am adding CI, contribution and security processes, and a release gate. Before applying I still need to select a licence, document asset rights, publish a verified release, and provide any real external usage evidence.
+> SleepHaven is early-stage and I do not claim broad adoption. As of 2026-09-17 the public repository has 11 commits, 18 stars, one visible contributor, no forks, and no releases. I have added an MIT licence, CI, contribution and security processes, and a release gate. Before applying I still need to complete the asset-rights record, publish a verified release, and provide any real external usage evidence.
 
 ## Evidence still required from the maintainer
 

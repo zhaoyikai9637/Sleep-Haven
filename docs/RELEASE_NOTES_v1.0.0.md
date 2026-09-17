@@ -17,7 +17,7 @@
 - Weather recommendations require internet access and support only the two configured cities.
 - Apple targets are not covered by the current GitHub Actions workflow.
 - No physical-device compatibility result is committed yet.
-- An open-source licence and asset redistribution evidence are still required.
+- The source code is MIT-licensed; complete asset redistribution evidence is still required.
 
 ## Proposed assets
 

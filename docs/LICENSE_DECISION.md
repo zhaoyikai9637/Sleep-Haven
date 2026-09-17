@@ -1,6 +1,13 @@
-# License decision required
+# License decision record
 
-SleepHaven is publicly visible but has no `LICENSE` file. Public visibility alone does not make the repository open source. A license choice must be made by the rights holder before the project is described or released as open source.
+SleepHaven adopted the MIT License on 17 September 2026 following an explicit decision by the repository owner.
+
+- Licence: MIT
+- Copyright holder: Zhao Yikai
+- Copyright year: 2026
+- Licence text: [`../LICENSE`](../LICENSE)
+
+The MIT License applies to the project source code. It does not override separate rights or licence requirements for bundled photographs, icons, fonts, or other third-party assets. Those records are maintained in [`ASSET_PROVENANCE.md`](ASSET_PROVENANCE.md).
 
 ## MIT
 
@@ -25,4 +32,4 @@ Before adding either license, the maintainer should confirm:
 3. bundled fonts and third-party assets carry their required notices;
 4. any collaborators agree to the licensing of their contributions.
 
-No choice was made during this repository-preparation pass. The maintainer must explicitly select MIT, Apache-2.0, or another reviewed license.
+The source-code licence decision is complete. Asset provenance remains a separate release-readiness check.
