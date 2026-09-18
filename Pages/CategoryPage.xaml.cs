@@ -1,27 +1,39 @@
 using System.Collections.ObjectModel;
+using Microsoft.Extensions.Logging;
 
 namespace SleepHaven;
 
 public partial class CategoryPage : ContentPage
 {
-    private static readonly IReadOnlyDictionary<string, string> CategoryTitles =
-        new Dictionary<string, string>
+    private static readonly IReadOnlyDictionary<string, (string Title, ProductType Type)> Categories =
+        new Dictionary<string, (string, ProductType)>
         {
-            ["Pillows"] = "Cozy pillows",
-            ["Quilts"] = "Warm quilts",
-            ["BeddingSets"] = "Bedding sets",
-            ["Mattresses"] = "Supportive mattresses"
+            ["Pillows"] = ("Cozy pillows", ProductType.Pillow),
+            ["Quilts"] = ("Warm quilts", ProductType.Quilt),
+            ["BeddingSets"] = ("Bedding sets", ProductType.BeddingSet),
+            ["Mattresses"] = ("Supportive mattresses", ProductType.Mattress)
         };
 
-    private readonly DatabaseService _databaseService = new();
+    private readonly DatabaseService _databaseService;
+    private readonly ProductCatalogService _catalogService;
+    private readonly AsyncNavigationGuard _navigationGuard;
+    private readonly ILogger<CategoryPage> _logger;
     private string _currentCategory = "Pillows";
     private int _currentSpan = 2;
 
     public ObservableCollection<Product> FilteredProducts { get; } = [];
 
-    public CategoryPage()
+    public CategoryPage(
+        DatabaseService databaseService,
+        ProductCatalogService catalogService,
+        AsyncNavigationGuard navigationGuard,
+        ILogger<CategoryPage> logger)
     {
         InitializeComponent();
+        _databaseService = databaseService;
+        _catalogService = catalogService;
+        _navigationGuard = navigationGuard;
+        _logger = logger;
         CategoryCollectionView.ItemsSource = FilteredProducts;
     }
 
@@ -33,7 +45,7 @@ public partial class CategoryPage : ContentPage
 
     private async void OnCategoryTapped(object sender, TappedEventArgs e)
     {
-        if (e.Parameter is string category && CategoryTitles.ContainsKey(category))
+        if (e.Parameter is string category && Categories.ContainsKey(category))
         {
             await SelectCategoryAsync(category);
         }
@@ -42,14 +54,20 @@ public partial class CategoryPage : ContentPage
     private async Task SelectCategoryAsync(string category)
     {
         _currentCategory = category;
-        CurrentCategoryTitle.Text = CategoryTitles[category];
+        CurrentCategoryTitle.Text = Categories[category].Title;
         UpdateTabStyles(category);
 
-        var products = await _databaseService.GetAllProductsAsync();
-        ReplaceItems(FilteredProducts, products.Where(product =>
-            product.Category.Contains(category, StringComparison.OrdinalIgnoreCase)));
-        ResultCountLabel.Text = FilteredProducts.Count.ToString("00");
+        try
+        {
+            ReplaceItems(FilteredProducts, await _catalogService.GetByTypeAsync(Categories[category].Type));
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "The product category could not be loaded.");
+            FilteredProducts.Clear();
+        }
 
+        ResultCountLabel.Text = FilteredProducts.Count.ToString("00");
         var hasProducts = FilteredProducts.Count > 0;
         EmptyStateLabel.IsVisible = !hasProducts;
         CategoryCollectionView.IsVisible = hasProducts;
@@ -63,7 +81,8 @@ public partial class CategoryPage : ContentPage
         }
 
         CategoryCollectionView.SelectedItem = null;
-        await Navigation.PushAsync(new ProductDetailPage(product));
+        await _navigationGuard.TryRunAsync(() =>
+            Navigation.PushAsync(new ProductDetailPage(product, _databaseService, _catalogService)));
     }
 
     private void UpdateTabStyles(string selectedCategory)
@@ -105,9 +124,6 @@ public partial class CategoryPage : ContentPage
     private static void ReplaceItems<T>(ObservableCollection<T> target, IEnumerable<T> items)
     {
         target.Clear();
-        foreach (var item in items)
-        {
-            target.Add(item);
-        }
+        foreach (var item in items) target.Add(item);
     }
 }

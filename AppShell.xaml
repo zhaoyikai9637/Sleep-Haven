@@ -8,13 +8,10 @@
 
     <TabBar>
         <ShellContent x:Name="TabHome"
-                      Title="Discover"
-                      ContentTemplate="{DataTemplate local:HomePage}" />
+                      Title="Discover" />
         <ShellContent x:Name="TabCategory"
-                      Title="Shop"
-                      ContentTemplate="{DataTemplate local:CategoryPage}" />
+                      Title="Shop" />
         <ShellContent x:Name="TabCollection"
-                      Title="Saved"
-                      ContentTemplate="{DataTemplate local:CollectionPage}" />
+                      Title="Saved" />
     </TabBar>
 </Shell>

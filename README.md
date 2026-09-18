@@ -47,8 +47,10 @@ No current application screenshot is checked in yet because this maintenance pas
 
 ## Repository layout
 
+- `SleepHaven.Core/` builds the platform-neutral catalogue, migration, search, and weather logic used by the app and tests.
+- `SleepHaven.Tests/` contains xUnit validation and migration tests.
 - `Data/` contains SQLite access and the seeded product catalogue.
-- `Models/` contains persisted application models.
+- `Models/` contains structured persisted models; display strings are derived rather than stored.
 - `Pages/` contains MAUI pages and their code-behind files.
 - `Services/` contains motion preferences and weather integration.
 - `Platforms/` and `Resources/` follow the .NET MAUI single-project layout.
@@ -63,7 +65,8 @@ Requirements:
 
 ```powershell
 dotnet workload install maui-windows
-dotnet restore SleepHaven.csproj `
+dotnet restore SleepHaven.Core/SleepHaven.Core.csproj
+dotnet restore SleepHaven.csproj --no-dependencies `
   -p:TargetFrameworks=net10.0-windows10.0.19041.0 `
   -r win-x64
 dotnet build SleepHaven.csproj `
@@ -89,7 +92,8 @@ Requirements:
 
 ```powershell
 dotnet workload install android
-dotnet restore SleepHaven.csproj `
+dotnet restore SleepHaven.Core/SleepHaven.Core.csproj
+dotnet restore SleepHaven.csproj --no-dependencies `
   -p:TargetFrameworks=net10.0-android `
   -r android-arm64
 dotnet build SleepHaven.csproj `
@@ -104,6 +108,15 @@ Release APKs must be signed with a maintainer-controlled keystore. Never commit 
 ## Verification
 
 Before opening a pull request, run the repository checks described in [`CONTRIBUTING.md`](CONTRIBUTING.md). CI builds Windows and Android targets independently so that unavailable Apple workloads do not block contributors on Windows runners.
+
+```powershell
+dotnet restore SleepHaven.Tests/SleepHaven.Tests.csproj
+dotnet test SleepHaven.Tests/SleepHaven.Tests.csproj --no-restore
+```
+
+The test suite validates seed IDs and image references, structured commerce fields, weather recommendation boundaries and cancellation, cached search behaviour, duplicate-navigation protection, favourite persistence, and migration from the legacy database. The migration policy is documented in [`docs/DATA_MIGRATIONS.md`](docs/DATA_MIGRATIONS.md).
+
+Product PNGs are losslessly optimized. Their decoded pixels and dimensions were verified unchanged; the tracked image payload was reduced from 28,340,171 to 22,521,049 bytes.
 
 ## Roadmap
 

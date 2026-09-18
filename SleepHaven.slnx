@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="SleepHaven.Core/SleepHaven.Core.csproj" />
+  <Project Path="SleepHaven.Tests/SleepHaven.Tests.csproj" />
   <Project Path="SleepHaven.csproj" />
 </Solution>

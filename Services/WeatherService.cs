@@ -1,11 +1,15 @@
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace SleepHaven;
 
 public sealed class WeatherService
 {
+    private static readonly TimeSpan CacheLifetime = TimeSpan.FromMinutes(30);
     private static readonly IReadOnlyDictionary<string, (double Latitude, double Longitude)> Locations =
         new Dictionary<string, (double, double)>(StringComparer.OrdinalIgnoreCase)
         {
@@ -14,33 +18,70 @@ public sealed class WeatherService
         };
 
     private readonly HttpClient _httpClient;
+    private readonly ILogger<WeatherService> _logger;
+    private readonly TimeProvider _timeProvider;
+    private readonly ConcurrentDictionary<string, CachedWeather> _cache = new(StringComparer.OrdinalIgnoreCase);
 
-    public WeatherService(HttpClient httpClient) => _httpClient = httpClient;
+    public WeatherService(
+        HttpClient httpClient,
+        ILogger<WeatherService>? logger = null,
+        TimeProvider? timeProvider = null)
+    {
+        _httpClient = httpClient;
+        _logger = logger ?? NullLogger<WeatherService>.Instance;
+        _timeProvider = timeProvider ?? TimeProvider.System;
+    }
 
-    public async Task<WeatherSnapshot> GetComfortForecastAsync(string cityName, CancellationToken cancellationToken = default)
+    public async Task<WeatherSnapshot> GetComfortForecastAsync(
+        string cityName,
+        CancellationToken cancellationToken = default)
     {
         if (!Locations.TryGetValue(cityName, out var location))
         {
             throw new ArgumentException($"Unsupported city: {cityName}", nameof(cityName));
         }
 
-        var url = FormattableString.Invariant($"https://api.open-meteo.com/v1/forecast?latitude={location.Latitude}&longitude={location.Longitude}&current=temperature_2m&daily=temperature_2m_min&timezone=auto&forecast_days=2&temperature_unit=celsius");
-        var response = await _httpClient.GetFromJsonAsync<OpenMeteoResponse>(url, cancellationToken)
-            ?? throw new InvalidOperationException("Weather service returned an empty response.");
-
-        var localTime = DateTime.ParseExact(response.Current.Time, "yyyy-MM-dd'T'HH:mm", CultureInfo.InvariantCulture);
-        var nightIndex = localTime.Hour < 7 ? 0 : 1;
-        if (response.Daily.MinimumTemperature.Length <= nightIndex)
+        var now = _timeProvider.GetUtcNow();
+        if (_cache.TryGetValue(cityName, out var cached) && now - cached.StoredAt < CacheLifetime)
         {
-            throw new InvalidOperationException("Weather service did not provide the upcoming night forecast.");
+            return cached.Snapshot;
         }
 
-        return new WeatherSnapshot(
-            cityName,
-            response.Current.Temperature,
-            response.Daily.MinimumTemperature[nightIndex],
-            DateOnly.FromDateTime(localTime),
-            Math.Abs(location.Latitude) <= 23.5);
+        var url = FormattableString.Invariant(
+            $"https://api.open-meteo.com/v1/forecast?latitude={location.Latitude}&longitude={location.Longitude}&current=temperature_2m&daily=temperature_2m_min&timezone=auto&forecast_days=2&temperature_unit=celsius");
+
+        try
+        {
+            var response = await _httpClient.GetFromJsonAsync<OpenMeteoResponse>(url, cancellationToken)
+                ?? throw new InvalidOperationException("Weather service returned an empty response.");
+            var localTime = DateTime.ParseExact(
+                response.Current.Time,
+                "yyyy-MM-dd'T'HH:mm",
+                CultureInfo.InvariantCulture);
+            var nightIndex = localTime.Hour < 7 ? 0 : 1;
+            if (response.Daily.MinimumTemperature.Length <= nightIndex)
+            {
+                throw new InvalidOperationException("Weather service did not provide the upcoming night forecast.");
+            }
+
+            var snapshot = new WeatherSnapshot(
+                cityName,
+                response.Current.Temperature,
+                response.Daily.MinimumTemperature[nightIndex],
+                DateOnly.FromDateTime(localTime),
+                Math.Abs(location.Latitude) <= 23.5);
+            _cache[cityName] = new CachedWeather(snapshot, now);
+            return snapshot;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning(exception, "Weather lookup failed for supported city {CityName}.", cityName);
+            throw;
+        }
     }
 
     public static string GetRecommendedSeason(WeatherSnapshot weather)
@@ -69,6 +110,8 @@ public sealed class WeatherService
             _ => nightLow < 18 ? "Spring" : "Summer"
         };
     }
+
+    private sealed record CachedWeather(WeatherSnapshot Snapshot, DateTimeOffset StoredAt);
 
     private sealed class OpenMeteoResponse
     {

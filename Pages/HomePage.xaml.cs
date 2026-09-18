@@ -1,11 +1,20 @@
 using System.Collections.ObjectModel;
+using Microsoft.Extensions.Logging;
 
 namespace SleepHaven;
 
 public partial class HomePage : ContentPage
 {
-    private readonly DatabaseService _databaseService = new();
-    private readonly WeatherService _weatherService = new(new HttpClient());
+    private readonly DatabaseService _databaseService;
+    private readonly ProductCatalogService _catalogService;
+    private readonly SeasonCatalogService _seasonCatalogService;
+    private readonly WeatherService _weatherService;
+    private readonly DebouncedSearchService<Product> _searchService;
+    private readonly AsyncNavigationGuard _navigationGuard;
+    private readonly MotionPreferences _motionPreferences;
+    private readonly ILogger<HomePage> _logger;
+    private CancellationTokenSource _pageLifetime = new();
+    private CancellationTokenSource? _weatherRequest;
     private bool _isFirstLoad = true;
     private bool _hasAnimated;
     private int _heroIndex;
@@ -34,9 +43,25 @@ public partial class HomePage : ContentPage
     public ObservableCollection<SeasonSection> SeasonSections { get; } = [];
     public ObservableCollection<Product> ActiveSeasonProducts { get; } = [];
 
-    public HomePage()
+    public HomePage(
+        DatabaseService databaseService,
+        ProductCatalogService catalogService,
+        SeasonCatalogService seasonCatalogService,
+        WeatherService weatherService,
+        DebouncedSearchService<Product> searchService,
+        AsyncNavigationGuard navigationGuard,
+        MotionPreferences motionPreferences,
+        ILogger<HomePage> logger)
     {
         InitializeComponent();
+        _databaseService = databaseService;
+        _catalogService = catalogService;
+        _seasonCatalogService = seasonCatalogService;
+        _weatherService = weatherService;
+        _searchService = searchService;
+        _navigationGuard = navigationGuard;
+        _motionPreferences = motionPreferences;
+        _logger = logger;
         SuggestionsCollectionView.ItemsSource = SearchSuggestions;
         BindingContext = this;
         RenderHero();
@@ -46,6 +71,11 @@ public partial class HomePage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        if (_pageLifetime.IsCancellationRequested)
+        {
+            _pageLifetime.Dispose();
+            _pageLifetime = new CancellationTokenSource();
+        }
         if (!_hasThemeHandler && Application.Current is { } app)
         {
             app.RequestedThemeChanged += OnRequestedThemeChanged;
@@ -74,6 +104,10 @@ public partial class HomePage : ContentPage
             _hasThemeHandler = false;
         }
 
+        _searchService.Cancel();
+        _weatherRequest?.Cancel();
+        _pageLifetime.Cancel();
+
         base.OnDisappearing();
     }
 
@@ -81,20 +115,8 @@ public partial class HomePage : ContentPage
 
     private async Task LoadSeasonSectionsAsync()
     {
-        var products = await _databaseService.GetAllProductsAsync();
-        var definitions = new[]
-        {
-            (Key: "Spring", Title: "Spring layers", Summary: "Breathable cotton and soft structure"),
-            (Key: "Summer", Title: "Summer lightness", Summary: "Silk and cooling natural fibres"),
-            (Key: "Autumn", Title: "Autumn balance", Summary: "Comfort for cooler, drier nights"),
-            (Key: "Winter", Title: "Winter warmth", Summary: "Insulating loft without excess weight")
-        };
-
-        foreach (var definition in definitions)
-        {
-            var matches = products.Where(product => product.Category.Contains(definition.Key, StringComparison.OrdinalIgnoreCase));
-            SeasonSections.Add(new SeasonSection(definition.Key, definition.Title, definition.Summary, matches));
-        }
+        foreach (var section in await _seasonCatalogService.GetSectionsAsync(_pageLifetime.Token))
+            SeasonSections.Add(section);
 
         SeasonLoadingState.IsVisible = false;
         SeasonProductsLayout.IsVisible = true;
@@ -103,7 +125,7 @@ public partial class HomePage : ContentPage
 
     private async Task AnimateEntryAsync()
     {
-        if (_hasAnimated || !MotionPreferences.AreAnimationsEnabled)
+        if (_hasAnimated || !_motionPreferences.AreAnimationsEnabled)
         {
             return;
         }
@@ -176,7 +198,8 @@ public partial class HomePage : ContentPage
         var product = await _databaseService.GetProductByIdAsync(HeroItems[_heroIndex].Id);
         if (product is not null)
         {
-            await Navigation.PushAsync(new ProductDetailPage(product));
+            await _navigationGuard.TryRunAsync(() =>
+                Navigation.PushAsync(new ProductDetailPage(product, _databaseService, _catalogService)));
         }
     }
 
@@ -189,13 +212,25 @@ public partial class HomePage : ContentPage
             return;
         }
 
-        var products = await _databaseService.GetAllProductsAsync();
-        ReplaceItems(SearchSuggestions, products.Where(product =>
-            product.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-            product.Description.Contains(query, StringComparison.OrdinalIgnoreCase)));
-
-        SearchSuggestionsOverlay.IsVisible = true;
-        MainContentScrollView.IsVisible = false;
+        try
+        {
+            var matches = await _searchService.SearchAsync(
+                query,
+                _catalogService.SearchAsync,
+                _pageLifetime.Token);
+            ReplaceItems(SearchSuggestions, matches);
+            SearchSuggestionsOverlay.IsVisible = true;
+            MainContentScrollView.IsVisible = false;
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected when the user continues typing or leaves the page.
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Search suggestions could not be loaded.");
+            ShowMainContent();
+        }
     }
 
     private void ShowMainContent()
@@ -214,7 +249,8 @@ public partial class HomePage : ContentPage
 
         SuggestionsCollectionView.SelectedItem = null;
         MainSearchBar.Text = string.Empty;
-        await Navigation.PushAsync(new ProductDetailPage(product));
+        await _navigationGuard.TryRunAsync(() =>
+            Navigation.PushAsync(new ProductDetailPage(product, _databaseService, _catalogService)));
     }
 
     private async void OnSearchButtonPressed(object sender, EventArgs e)
@@ -223,7 +259,13 @@ public partial class HomePage : ContentPage
         if (!string.IsNullOrEmpty(query))
         {
             MainSearchBar.Text = string.Empty;
-            await Navigation.PushAsync(new SearchPage(query));
+            await _navigationGuard.TryRunAsync(() =>
+                Navigation.PushAsync(new SearchPage(
+                    query,
+                    _databaseService,
+                    _catalogService,
+                    _navigationGuard,
+                    _logger)));
         }
     }
 
@@ -264,7 +306,8 @@ public partial class HomePage : ContentPage
     private async void OnSeasonFeatureTapped(object sender, TappedEventArgs e)
     {
         if (SeasonSections.Count == 0 || SeasonSections[_seasonIndex].Products.FirstOrDefault() is not { } product) return;
-        await Navigation.PushAsync(new ProductDetailPage(product));
+        await _navigationGuard.TryRunAsync(() =>
+            Navigation.PushAsync(new ProductDetailPage(product, _databaseService, _catalogService)));
     }
 
     private void RenderSeason()
@@ -334,7 +377,8 @@ public partial class HomePage : ContentPage
         var product = await _databaseService.GetProductByIdAsync(productId);
         if (product is not null)
         {
-            await Navigation.PushAsync(new ProductDetailPage(product));
+            await _navigationGuard.TryRunAsync(() =>
+                Navigation.PushAsync(new ProductDetailPage(product, _databaseService, _catalogService)));
         }
     }
 
@@ -364,18 +408,26 @@ public partial class HomePage : ContentPage
     private async Task FetchWeatherAndRecommendAsync(string cityName)
     {
         var requestVersion = ++_weatherRequestVersion;
+        _weatherRequest?.Cancel();
+        _weatherRequest?.Dispose();
+        _weatherRequest = CancellationTokenSource.CreateLinkedTokenSource(_pageLifetime.Token);
         WeatherRecommendationCard.IsVisible = true;
         WeatherTitleLabel.Text = $"Reading {cityName}'s night";
         WeatherBodyLabel.Text = "Selecting a comfortable material profile.";
 
         try
         {
-            var weather = await _weatherService.GetComfortForecastAsync(cityName);
+            var weather = await _weatherService.GetComfortForecastAsync(cityName, _weatherRequest.Token);
             if (requestVersion == _weatherRequestVersion) ApplyWeatherRecommendation(weather);
         }
-        catch
+        catch (OperationCanceledException)
+        {
+            // Expected when a newer city request replaces this one or the page closes.
+        }
+        catch (Exception exception)
         {
             if (requestVersion != _weatherRequestVersion) return;
+            _logger.LogWarning(exception, "The weather recommendation could not be loaded for {CityName}.", cityName);
             WeatherTitleLabel.Text = "Weather signal unavailable";
             WeatherBodyLabel.Text = "Every seasonal edit remains available below.";
         }

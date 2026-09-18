@@ -2,7 +2,13 @@ namespace SleepHaven;
 
 public partial class LoadingPage : ContentPage
 {
-    public LoadingPage() => InitializeComponent();
+    private readonly AppShell _appShell;
+
+    public LoadingPage(AppShell appShell)
+    {
+        InitializeComponent();
+        _appShell = appShell;
+    }
 
     protected override async void OnAppearing()
     {
@@ -11,7 +17,7 @@ public partial class LoadingPage : ContentPage
 
         if (Application.Current?.Windows.FirstOrDefault() is { } window)
         {
-            window.Page = new AppShell();
+            window.Page = _appShell;
         }
     }
 }

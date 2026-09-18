@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage x:Class="SleepHaven.SearchPage" xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:SleepHaven" Title="Search" Shell.TabBarIsVisible="False">
+<ContentPage x:Class="SleepHaven.SearchPage" xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:SleepHaven" xmlns:core="clr-namespace:SleepHaven;assembly=SleepHaven.Core" Title="Search" Shell.TabBarIsVisible="False">
     <Grid RowDefinitions="Auto,*">
         <Grid Padding="22,20" BackgroundColor="{StaticResource AccentDeep}" ColumnDefinitions="Auto,*" ColumnSpacing="16">
             <Label Text="04" TextColor="#8ED1FF" FontFamily="OpenSansSemibold" FontSize="42" />
@@ -10,13 +10,13 @@
         </Grid>
         <CollectionView x:Name="ResultsCollectionView" Grid.Row="1" Margin="20,18,20,24" SelectionMode="Single" SelectionChanged="OnProductSelected">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="local:Product">
+                <DataTemplate x:DataType="core:Product">
                     <Grid Padding="0,0,0,14" Margin="0,0,0,14" ColumnDefinitions="108,*" ColumnSpacing="16">
                         <Image Source="{Binding ThumbnailUrl}" HeightRequest="104" Aspect="AspectFill" SemanticProperties.Description="{Binding Name}" />
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
-                            <Label Text="{Binding Category}" Style="{StaticResource SignalLabelStyle}" />
+                            <Label Text="{Binding CategoryDisplay}" Style="{StaticResource SignalLabelStyle}" />
                             <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" />
-                            <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
+                            <Label Text="{Binding FormattedPrice}" Style="{StaticResource PriceStyle}" />
                         </VerticalStackLayout>
                         <BoxView Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End" Color="{AppThemeBinding Light={StaticResource LightStroke}, Dark={StaticResource DarkStroke}}" />
                     </Grid>

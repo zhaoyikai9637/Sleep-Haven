@@ -6,6 +6,8 @@ All notable changes to SleepHaven will be documented in this file. The format fo
 
 ### Added
 
+- Added a platform-neutral Core project and an xUnit test project covering catalogue integrity, weather rules, search cancellation, navigation guards, persistence, and legacy migration.
+- Added an explicit SQLite schema-version migration policy and stable database filename.
 - Adopted the MIT License, copyright 2026 Zhao Yikai.
 - Added a product-image provenance statement and permission-record template.
 - Open-source contribution, conduct, security, issue, and pull-request guidance.
@@ -14,6 +16,10 @@ All notable changes to SleepHaven will be documented in this file. The format fo
 
 ### Changed
 
+- Replaced display-string product prices and categories with structured price, currency, type, season, and material fields.
+- Registered database, catalogue, weather, navigation, and page dependencies through MAUI dependency injection.
+- Added 250 ms cancellable search debounce, catalogue caching, weather-result caching, request timeout/cancellation, and duplicate-navigation protection.
+- Losslessly optimized PNG resources by 20.53% while preserving decoded pixels and dimensions.
 - Clarified the repository's prototype status and supported use cases.
 - Normalised the planned first public version to `1.0.0`.
 

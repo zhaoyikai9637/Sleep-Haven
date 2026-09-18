@@ -12,11 +12,11 @@ This roadmap describes intended work, not shipped functionality. Priorities may 
 
 ## Near-term engineering
 
-- [ ] **Add automated tests for seasonal recommendation boundaries.** Cover tropical behaviour, night-temperature thresholds, month boundaries, and stale-request protection.
-- [ ] **Extract weather and navigation state from page code-behind.** Make recommendation logic and page state independently testable.
+- [x] **Add automated tests for seasonal recommendation boundaries.** Tropical behaviour, temperature/month boundaries, request cancellation, and latest-navigation protection are covered.
+- [x] **Extract weather, catalogue, search, and navigation behaviour from page code-behind.** These behaviours now live behind injectable, independently testable services.
 - [ ] **Add accessibility checks.** Verify screen-reader names, keyboard focus order, contrast, text scaling, and reduced-motion behaviour.
-- [ ] **Add a seed-data validation check.** Require unique IDs, existing image references, parseable prices, and supported seasonal categories.
-- [ ] **Define local-data migration policy.** Document when the SQLite file version changes and how favourites are preserved.
+- [x] **Add a seed-data validation check.** CI validates unique IDs, image references, non-negative decimal prices, and supported taxonomy values.
+- [x] **Define local-data migration policy.** `DATA_MIGRATIONS.md` documents versioning, legacy import, and favourite preservation.
 
 ## Distribution and maintenance
 

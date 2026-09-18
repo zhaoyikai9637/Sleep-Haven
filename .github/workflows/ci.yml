@@ -34,9 +34,20 @@ jobs:
       - name: Install Windows MAUI workload
         run: dotnet workload install maui-windows --skip-manifest-update
 
-      - name: Restore
+      - name: Restore tests
+        run: >-
+          dotnet restore SleepHaven.Tests/SleepHaven.Tests.csproj
+          -p:NuGetAudit=true
+          -p:NuGetAuditLevel=low
+          -warnaserror:NU1901,NU1902,NU1903,NU1904
+
+      - name: Test
+        run: dotnet test SleepHaven.Tests/SleepHaven.Tests.csproj --configuration Release --no-restore
+
+      - name: Restore Windows app
         run: >-
           dotnet restore SleepHaven.csproj
+          --no-dependencies
           -p:TargetFrameworks=${{ env.TARGET_FRAMEWORK }}
           -r ${{ env.RUNTIME_ID }}
           -p:NuGetAudit=true
@@ -77,9 +88,17 @@ jobs:
       - name: Install Android workload
         run: dotnet workload install android --skip-manifest-update
 
-      - name: Restore
+      - name: Restore core
+        run: >-
+          dotnet restore SleepHaven.Core/SleepHaven.Core.csproj
+          -p:NuGetAudit=true
+          -p:NuGetAuditLevel=low
+          -warnaserror:NU1901,NU1902,NU1903,NU1904
+
+      - name: Restore Android app
         run: >-
           dotnet restore SleepHaven.csproj
+          --no-dependencies
           -p:TargetFrameworks=${{ env.TARGET_FRAMEWORK }}
           -r ${{ env.RUNTIME_ID }}
           -p:NuGetAudit=true

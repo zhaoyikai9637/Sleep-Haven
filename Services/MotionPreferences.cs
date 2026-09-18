@@ -1,8 +1,10 @@
+using Microsoft.Extensions.Logging;
+
 namespace SleepHaven;
 
-public static class MotionPreferences
+public sealed class MotionPreferences(ILogger<MotionPreferences> logger)
 {
-    public static bool AreAnimationsEnabled
+    public bool AreAnimationsEnabled
     {
         get
         {
@@ -11,8 +13,9 @@ public static class MotionPreferences
             {
                 return new Windows.UI.ViewManagement.UISettings().AnimationsEnabled;
             }
-            catch
+            catch (Exception exception)
             {
+                logger.LogWarning(exception, "Windows animation preferences could not be read.");
                 return false;
             }
 #else

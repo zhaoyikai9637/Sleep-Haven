@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SleepHaven"
+    xmlns:core="clr-namespace:SleepHaven;assembly=SleepHaven.Core"
     x:Name="HomePageRoot"
     Title="Home"
     Shell.NavBarIsVisible="False">
@@ -138,14 +139,14 @@
                         </VerticalStackLayout>
                         <VerticalStackLayout x:Name="SeasonProductsLayout" x:DataType="local:HomePage" Grid.Row="1" Spacing="0" Margin="0,12,0,0" IsVisible="False" BindableLayout.ItemsSource="{Binding ActiveSeasonProducts}">
                             <BindableLayout.ItemTemplate>
-                                <DataTemplate x:DataType="local:Product">
+                                <DataTemplate x:DataType="core:Product">
                                     <Grid Padding="0,10" ColumnDefinitions="96,*" ColumnSpacing="14">
                                         <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="{Binding Id}" /></Grid.GestureRecognizers>
                                         <Image Source="{Binding ThumbnailUrl}" HeightRequest="86" Aspect="AspectFill" SemanticProperties.Description="{Binding Name}" />
                                         <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-                                            <Label Text="{Binding Category}" Style="{StaticResource CaptionStyle}" />
+                                            <Label Text="{Binding CategoryDisplay}" Style="{StaticResource CaptionStyle}" />
                                             <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" />
-                                            <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
+                                            <Label Text="{Binding FormattedPrice}" Style="{StaticResource PriceStyle}" />
                                         </VerticalStackLayout>
                                     </Grid>
                                 </DataTemplate>
@@ -160,13 +161,13 @@
         <Grid x:Name="SearchSuggestionsOverlay" Grid.Row="2" Padding="20,4,20,20" IsVisible="False" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
             <CollectionView x:Name="SuggestionsCollectionView" SelectionMode="Single" SelectionChanged="OnSuggestionSelected">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="local:Product">
+                    <DataTemplate x:DataType="core:Product">
                         <Grid Padding="2,11" ColumnDefinitions="72,*" ColumnSpacing="16">
                             <Image Source="{Binding ThumbnailUrl}" HeightRequest="72" Aspect="AspectFill" SemanticProperties.Description="{Binding Name}" />
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
-                                <Label Text="{Binding Category}" Style="{StaticResource SignalLabelStyle}" />
+                                <Label Text="{Binding CategoryDisplay}" Style="{StaticResource SignalLabelStyle}" />
                                 <Label Text="{Binding Name}" Style="{StaticResource ProductNameStyle}" MaxLines="1" />
-                                <Label Text="{Binding Price}" Style="{StaticResource PriceStyle}" />
+                                <Label Text="{Binding FormattedPrice}" Style="{StaticResource PriceStyle}" />
                             </VerticalStackLayout>
                         </Grid>
                     </DataTemplate>

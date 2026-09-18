@@ -9,6 +9,7 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<DefaultItemExcludes>$(DefaultItemExcludes);SleepHaven.Core\**;SleepHaven.Tests\**</DefaultItemExcludes>
 
 		<!-- Display name -->
 		<ApplicationTitle>SleepHaven</ApplicationTitle>
@@ -50,10 +51,17 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
 		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'android'" />
 		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.android" Version="2.1.13" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="Data\DatabaseService.cs;Data\ProductSeedData.cs;Models\Product.cs;Models\ProductTaxonomy.cs;Models\SeasonSection.cs;Services\AsyncNavigationGuard.cs;Services\DebouncedSearchService.cs;Services\ProductCatalogService.cs;Services\SeasonCatalogService.cs;Services\WeatherService.cs" />
+		<ProjectReference Include="SleepHaven.Core\SleepHaven.Core.csproj"
+		                  GlobalPropertiesToRemove="TargetFrameworks;RuntimeIdentifier" />
 	</ItemGroup>
 
 </Project>

@@ -36,7 +36,10 @@ Run the checks relevant to your change. A documentation-only change still needs 
 
 ```powershell
 git diff --check
-dotnet restore SleepHaven.csproj `
+dotnet restore SleepHaven.Tests/SleepHaven.Tests.csproj
+dotnet test SleepHaven.Tests/SleepHaven.Tests.csproj --no-restore
+dotnet restore SleepHaven.Core/SleepHaven.Core.csproj
+dotnet restore SleepHaven.csproj --no-dependencies `
   -p:TargetFrameworks=net10.0-windows10.0.19041.0 `
   -r win-x64
 dotnet build SleepHaven.csproj `
