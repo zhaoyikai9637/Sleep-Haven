@@ -7,17 +7,15 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
-    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
-    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\Models\Product.cs" Link="Models\Product.cs" />
     <Compile Include="..\Models\ProductTaxonomy.cs" Link="Models\ProductTaxonomy.cs" />
     <Compile Include="..\Models\SeasonSection.cs" Link="Models\SeasonSection.cs" />
-    <Compile Include="..\Data\DatabaseService.cs" Link="Data\DatabaseService.cs" />
     <Compile Include="..\Data\ProductSeedData.cs" Link="Data\ProductSeedData.cs" />
+    <Compile Include="..\Services\IProductStore.cs" Link="Services\IProductStore.cs" />
+    <Compile Include="..\Services\BackendProductStore.cs" Link="Services\BackendProductStore.cs" />
     <Compile Include="..\Services\DebouncedSearchService.cs" Link="Services\DebouncedSearchService.cs" />
     <Compile Include="..\Services\AsyncNavigationGuard.cs" Link="Services\AsyncNavigationGuard.cs" />
     <Compile Include="..\Services\ProductCatalogService.cs" Link="Services\ProductCatalogService.cs" />

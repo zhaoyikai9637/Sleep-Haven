@@ -40,7 +40,7 @@ The commercial review covered 12 international references across specialist bedd
 - Removed automatic hero advancement. The hero now supports swipe plus explicit previous and next controls.
 - Restored the original pale-aqua to deep-blue loading screen and its three-second pacing.
 - Added a delivery threshold, comfort-promise signal, material and care reassurance, product counts, contextual weather merchandising, and a prominent save action.
-- Preserved search, category browsing, seasonal recommendations, product detail, and local favourites while giving each surface a distinct visual role.
+- Preserved search, category browsing, seasonal recommendations, product detail, and favourites while giving each surface a distinct visual role.
 
 ## Next commercial capabilities
 

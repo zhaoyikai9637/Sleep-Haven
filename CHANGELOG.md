@@ -6,8 +6,10 @@ All notable changes to SleepHaven will be documented in this file. The format fo
 
 ### Added
 
-- Added a platform-neutral Core project and an xUnit test project covering catalogue integrity, weather rules, search cancellation, navigation guards, persistence, and legacy migration.
-- Added an explicit SQLite schema-version migration policy and stable database filename.
+- Added an ASP.NET Core 10 backend with PostgreSQL 18, EF Core migrations, health checks, and catalogue seeding.
+- Added real PostgreSQL integration tests covering the MAUI API client, migrations, health, product reads, favourite writes, and per-client isolation.
+- Added Docker Compose development services and Huawei/Honor LAN connection instructions.
+- Added a platform-neutral Core project and an xUnit test project covering catalogue integrity, API contracts, weather rules, search cancellation, and navigation guards.
 - Adopted the MIT License, copyright 2026 Zhao Yikai.
 - Added a product-image provenance statement and permission-record template.
 - Open-source contribution, conduct, security, issue, and pull-request guidance.
@@ -16,6 +18,8 @@ All notable changes to SleepHaven will be documented in this file. The format fo
 
 ### Changed
 
+- Replaced all on-device SQLite packages, attributes, migrations, and services with an HTTP product store backed by PostgreSQL.
+- Moved favourites into a dedicated backend table keyed by installation client ID and product ID.
 - Replaced display-string product prices and categories with structured price, currency, type, season, and material fields.
 - Registered database, catalogue, weather, navigation, and page dependencies through MAUI dependency injection.
 - Added 250 ms cancellable search debounce, catalogue caching, weather-result caching, request timeout/cancellation, and duplicate-navigation protection.

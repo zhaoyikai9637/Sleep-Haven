@@ -14,7 +14,7 @@ public partial class CategoryPage : ContentPage
             ["Mattresses"] = ("Supportive mattresses", ProductType.Mattress)
         };
 
-    private readonly DatabaseService _databaseService;
+    private readonly IProductStore _productStore;
     private readonly ProductCatalogService _catalogService;
     private readonly AsyncNavigationGuard _navigationGuard;
     private readonly ILogger<CategoryPage> _logger;
@@ -24,13 +24,13 @@ public partial class CategoryPage : ContentPage
     public ObservableCollection<Product> FilteredProducts { get; } = [];
 
     public CategoryPage(
-        DatabaseService databaseService,
+        IProductStore productStore,
         ProductCatalogService catalogService,
         AsyncNavigationGuard navigationGuard,
         ILogger<CategoryPage> logger)
     {
         InitializeComponent();
-        _databaseService = databaseService;
+        _productStore = productStore;
         _catalogService = catalogService;
         _navigationGuard = navigationGuard;
         _logger = logger;
@@ -82,7 +82,7 @@ public partial class CategoryPage : ContentPage
 
         CategoryCollectionView.SelectedItem = null;
         await _navigationGuard.TryRunAsync(() =>
-            Navigation.PushAsync(new ProductDetailPage(product, _databaseService, _catalogService)));
+            Navigation.PushAsync(new ProductDetailPage(product, _productStore, _catalogService)));
     }
 
     private void UpdateTabStyles(string selectedCategory)

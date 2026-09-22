@@ -1,5 +1,4 @@
-﻿using SQLite;
-
+﻿
 namespace SleepHaven;
 
 public static class ProductSeedData

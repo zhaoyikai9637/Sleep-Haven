@@ -3,18 +3,18 @@ namespace SleepHaven;
 public partial class ProductDetailPage : ContentPage
 {
     private readonly Product _currentProduct;
-    private readonly DatabaseService _databaseService;
+    private readonly IProductStore _productStore;
     private readonly ProductCatalogService _catalogService;
     private bool? _isLandscape;
 
     public ProductDetailPage(
         Product product,
-        DatabaseService databaseService,
+        IProductStore productStore,
         ProductCatalogService catalogService)
     {
         InitializeComponent();
         _currentProduct = product;
-        _databaseService = databaseService;
+        _productStore = productStore;
         _catalogService = catalogService;
         ProductImage.Source = product.ThumbnailUrl;
         SemanticProperties.SetDescription(ProductImage, product.Name);
@@ -31,7 +31,7 @@ public partial class ProductDetailPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        var freshProduct = await _databaseService.GetProductByIdAsync(_currentProduct.Id);
+        var freshProduct = await _productStore.GetProductByIdAsync(_currentProduct.Id);
         if (freshProduct is not null)
         {
             _currentProduct.IsFavorite = freshProduct.IsFavorite;
@@ -79,7 +79,7 @@ public partial class ProductDetailPage : ContentPage
     private async void OnFavoriteClicked(object sender, EventArgs e)
     {
         _currentProduct.IsFavorite = !_currentProduct.IsFavorite;
-        await _databaseService.SetFavoriteAsync(_currentProduct.Id, _currentProduct.IsFavorite);
+        await _productStore.SetFavoriteAsync(_currentProduct.Id, _currentProduct.IsFavorite);
         _catalogService.Invalidate();
         UpdateFavoriteIcon();
     }

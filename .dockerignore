@@ -1,0 +1,11 @@
+**/bin
+**/obj
+.git
+.github
+.vs
+.env*
+artifacts
+AppPackages
+*.apk
+*.aab
+*.zip

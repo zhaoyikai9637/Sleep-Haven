@@ -5,7 +5,7 @@ namespace SleepHaven;
 
 public partial class HomePage : ContentPage
 {
-    private readonly DatabaseService _databaseService;
+    private readonly IProductStore _productStore;
     private readonly ProductCatalogService _catalogService;
     private readonly SeasonCatalogService _seasonCatalogService;
     private readonly WeatherService _weatherService;
@@ -44,7 +44,7 @@ public partial class HomePage : ContentPage
     public ObservableCollection<Product> ActiveSeasonProducts { get; } = [];
 
     public HomePage(
-        DatabaseService databaseService,
+        IProductStore productStore,
         ProductCatalogService catalogService,
         SeasonCatalogService seasonCatalogService,
         WeatherService weatherService,
@@ -54,7 +54,7 @@ public partial class HomePage : ContentPage
         ILogger<HomePage> logger)
     {
         InitializeComponent();
-        _databaseService = databaseService;
+        _productStore = productStore;
         _catalogService = catalogService;
         _seasonCatalogService = seasonCatalogService;
         _weatherService = weatherService;
@@ -195,11 +195,11 @@ public partial class HomePage : ContentPage
             return;
         }
 
-        var product = await _databaseService.GetProductByIdAsync(HeroItems[_heroIndex].Id);
+        var product = await _productStore.GetProductByIdAsync(HeroItems[_heroIndex].Id);
         if (product is not null)
         {
             await _navigationGuard.TryRunAsync(() =>
-                Navigation.PushAsync(new ProductDetailPage(product, _databaseService, _catalogService)));
+                Navigation.PushAsync(new ProductDetailPage(product, _productStore, _catalogService)));
         }
     }
 
@@ -250,7 +250,7 @@ public partial class HomePage : ContentPage
         SuggestionsCollectionView.SelectedItem = null;
         MainSearchBar.Text = string.Empty;
         await _navigationGuard.TryRunAsync(() =>
-            Navigation.PushAsync(new ProductDetailPage(product, _databaseService, _catalogService)));
+            Navigation.PushAsync(new ProductDetailPage(product, _productStore, _catalogService)));
     }
 
     private async void OnSearchButtonPressed(object sender, EventArgs e)
@@ -262,7 +262,7 @@ public partial class HomePage : ContentPage
             await _navigationGuard.TryRunAsync(() =>
                 Navigation.PushAsync(new SearchPage(
                     query,
-                    _databaseService,
+                    _productStore,
                     _catalogService,
                     _navigationGuard,
                     _logger)));
@@ -307,7 +307,7 @@ public partial class HomePage : ContentPage
     {
         if (SeasonSections.Count == 0 || SeasonSections[_seasonIndex].Products.FirstOrDefault() is not { } product) return;
         await _navigationGuard.TryRunAsync(() =>
-            Navigation.PushAsync(new ProductDetailPage(product, _databaseService, _catalogService)));
+            Navigation.PushAsync(new ProductDetailPage(product, _productStore, _catalogService)));
     }
 
     private void RenderSeason()
@@ -374,11 +374,11 @@ public partial class HomePage : ContentPage
             return;
         }
 
-        var product = await _databaseService.GetProductByIdAsync(productId);
+        var product = await _productStore.GetProductByIdAsync(productId);
         if (product is not null)
         {
             await _navigationGuard.TryRunAsync(() =>
-                Navigation.PushAsync(new ProductDetailPage(product, _databaseService, _catalogService)));
+                Navigation.PushAsync(new ProductDetailPage(product, _productStore, _catalogService)));
         }
     }
 

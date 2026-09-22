@@ -16,7 +16,7 @@ This roadmap describes intended work, not shipped functionality. Priorities may 
 - [x] **Extract weather, catalogue, search, and navigation behaviour from page code-behind.** These behaviours now live behind injectable, independently testable services.
 - [ ] **Add accessibility checks.** Verify screen-reader names, keyboard focus order, contrast, text scaling, and reduced-motion behaviour.
 - [x] **Add a seed-data validation check.** CI validates unique IDs, image references, non-negative decimal prices, and supported taxonomy values.
-- [x] **Define local-data migration policy.** `DATA_MIGRATIONS.md` documents versioning, legacy import, and favourite preservation.
+- [x] **Replace local persistence with a real backend.** The ASP.NET Core API, PostgreSQL migrations, per-client favourites, and integration tests are documented in `BACKEND_DATABASE.md`.
 
 ## Distribution and maintenance
 

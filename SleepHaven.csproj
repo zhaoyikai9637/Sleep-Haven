@@ -9,7 +9,9 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<DefaultItemExcludes>$(DefaultItemExcludes);SleepHaven.Core\**;SleepHaven.Tests\**</DefaultItemExcludes>
+		<DefaultItemExcludes>$(DefaultItemExcludes);SleepHaven.Core\**;SleepHaven.Tests\**;SleepHaven.Api\**;SleepHaven.Api.Tests\**</DefaultItemExcludes>
+		<SleepHavenBackendUrl Condition="'$(SleepHavenBackendUrl)' == '' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">http://10.0.2.2:5080</SleepHavenBackendUrl>
+		<SleepHavenBackendUrl Condition="'$(SleepHavenBackendUrl)' == ''">http://127.0.0.1:5080</SleepHavenBackendUrl>
 
 		<!-- Display name -->
 		<ApplicationTitle>SleepHaven</ApplicationTitle>
@@ -52,16 +54,19 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
-		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
-		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'android'" />
-		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.android" Version="2.1.13" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Remove="Data\DatabaseService.cs;Data\ProductSeedData.cs;Models\Product.cs;Models\ProductTaxonomy.cs;Models\SeasonSection.cs;Services\AsyncNavigationGuard.cs;Services\DebouncedSearchService.cs;Services\ProductCatalogService.cs;Services\SeasonCatalogService.cs;Services\WeatherService.cs" />
+		<Compile Remove="Data\ProductSeedData.cs;Models\Product.cs;Models\ProductTaxonomy.cs;Models\SeasonSection.cs;Services\AsyncNavigationGuard.cs;Services\BackendProductStore.cs;Services\DebouncedSearchService.cs;Services\IProductStore.cs;Services\ProductCatalogService.cs;Services\SeasonCatalogService.cs;Services\WeatherService.cs" />
 		<ProjectReference Include="SleepHaven.Core\SleepHaven.Core.csproj"
 		                  GlobalPropertiesToRemove="TargetFrameworks;RuntimeIdentifier" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+			<_Parameter1>SleepHavenBackendUrl</_Parameter1>
+			<_Parameter2>$(SleepHavenBackendUrl)</_Parameter2>
+		</AssemblyAttribute>
 	</ItemGroup>
 
 </Project>

@@ -22,7 +22,7 @@ This is a single-maintainer prototype. Reports will be acknowledged and assessed
 
 Relevant reports include:
 
-- unsafe local database or file handling;
+- unsafe API, PostgreSQL, or local file handling;
 - vulnerable dependency use with a practical impact on SleepHaven;
 - network-response handling that permits code execution or data exposure;
 - signing, package-integrity, or update-path weaknesses;

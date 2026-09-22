@@ -5,7 +5,7 @@ namespace SleepHaven;
 
 public partial class CollectionPage : ContentPage
 {
-    private readonly DatabaseService _databaseService;
+    private readonly IProductStore _productStore;
     private readonly ProductCatalogService _catalogService;
     private readonly AsyncNavigationGuard _navigationGuard;
     private readonly ILogger<CollectionPage> _logger;
@@ -13,13 +13,13 @@ public partial class CollectionPage : ContentPage
     public ObservableCollection<Product> FavoriteProducts { get; } = [];
 
     public CollectionPage(
-        DatabaseService databaseService,
+        IProductStore productStore,
         ProductCatalogService catalogService,
         AsyncNavigationGuard navigationGuard,
         ILogger<CollectionPage> logger)
     {
         InitializeComponent();
-        _databaseService = databaseService;
+        _productStore = productStore;
         _catalogService = catalogService;
         _navigationGuard = navigationGuard;
         _logger = logger;
@@ -36,7 +36,7 @@ public partial class CollectionPage : ContentPage
     {
         try
         {
-            ReplaceItems(FavoriteProducts, await _databaseService.GetFavoriteProductsAsync());
+            ReplaceItems(FavoriteProducts, await _productStore.GetFavoriteProductsAsync());
         }
         catch (Exception exception)
         {
@@ -54,7 +54,7 @@ public partial class CollectionPage : ContentPage
         if (e.CurrentSelection.FirstOrDefault() is not Product product) return;
         FavoritesCollectionView.SelectedItem = null;
         await _navigationGuard.TryRunAsync(() =>
-            Navigation.PushAsync(new ProductDetailPage(product, _databaseService, _catalogService)));
+            Navigation.PushAsync(new ProductDetailPage(product, _productStore, _catalogService)));
     }
 
     private async void OnRemoveClicked(object sender, EventArgs e)
@@ -63,7 +63,7 @@ public partial class CollectionPage : ContentPage
 
         try
         {
-            await _databaseService.SetFavoriteAsync(product.Id, false);
+            await _productStore.SetFavoriteAsync(product.Id, false);
             _catalogService.Invalidate();
             await LoadFavoritesAsync();
         }

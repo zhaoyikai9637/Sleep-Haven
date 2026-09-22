@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -20,16 +21,20 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
-        builder.Services.AddSingleton(serviceProvider =>
+        var clientId = Preferences.Default.Get("SleepHaven.ClientId", string.Empty);
+        if (string.IsNullOrWhiteSpace(clientId))
         {
-            var appData = FileSystem.AppDataDirectory;
-            return new DatabaseService(
-                Path.Combine(appData, "SleepHaven.db3"),
-                Path.Combine(appData, "SleepHaven_v8.db3"),
-                serviceProvider.GetRequiredService<ILogger<DatabaseService>>());
-        });
-        builder.Services.AddSingleton<IProductStore>(serviceProvider =>
-            serviceProvider.GetRequiredService<DatabaseService>());
+            clientId = Guid.NewGuid().ToString("N");
+            Preferences.Default.Set("SleepHaven.ClientId", clientId);
+        }
+
+        var backendUrl = typeof(MauiProgram).Assembly
+            .GetCustomAttributes<AssemblyMetadataAttribute>()
+            .Single(attribute => attribute.Key == "SleepHavenBackendUrl")
+            .Value!;
+        builder.Services.AddSingleton(new BackendConnectionOptions(backendUrl, clientId));
+        builder.Services.AddHttpClient<IProductStore, BackendProductStore>(client =>
+            client.Timeout = TimeSpan.FromSeconds(12));
         builder.Services.AddSingleton<ProductCatalogService>();
         builder.Services.AddSingleton<SeasonCatalogService>();
         builder.Services.AddSingleton(new DebouncedSearchService<Product>(TimeSpan.FromMilliseconds(250)));

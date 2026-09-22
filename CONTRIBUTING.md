@@ -49,6 +49,8 @@ dotnet build SleepHaven.csproj `
   --no-restore
 ```
 
+Changes to the API, database model, migrations, or product-store contract must also run the PostgreSQL integration suite described in [`docs/BACKEND_DATABASE.md`](docs/BACKEND_DATABASE.md). Use a disposable test database and never point tests at production.
+
 For Android changes, also build `net10.0-android` for `android-arm64` as documented in the README. If you cannot run a required target, state that clearly in the pull request.
 
 ## Pull requests

@@ -6,7 +6,7 @@ namespace SleepHaven;
 public partial class SearchPage : ContentPage
 {
     private readonly string _query;
-    private readonly DatabaseService _databaseService;
+    private readonly IProductStore _productStore;
     private readonly ProductCatalogService _catalogService;
     private readonly AsyncNavigationGuard _navigationGuard;
     private readonly ILogger _logger;
@@ -16,14 +16,14 @@ public partial class SearchPage : ContentPage
 
     public SearchPage(
         string query,
-        DatabaseService databaseService,
+        IProductStore productStore,
         ProductCatalogService catalogService,
         AsyncNavigationGuard navigationGuard,
         ILogger logger)
     {
         InitializeComponent();
         _query = query;
-        _databaseService = databaseService;
+        _productStore = productStore;
         _catalogService = catalogService;
         _navigationGuard = navigationGuard;
         _logger = logger;
@@ -54,6 +54,6 @@ public partial class SearchPage : ContentPage
         if (e.CurrentSelection.FirstOrDefault() is not Product product) return;
         ResultsCollectionView.SelectedItem = null;
         await _navigationGuard.TryRunAsync(() =>
-            Navigation.PushAsync(new ProductDetailPage(product, _databaseService, _catalogService)));
+            Navigation.PushAsync(new ProductDetailPage(product, _productStore, _catalogService)));
     }
 }

@@ -8,7 +8,7 @@ These changes are prepared but were not applied because GitHub CLI is not authen
 
 ## Topics
 
-`dotnet-maui`, `dotnet`, `android`, `windows`, `sqlite`, `retail`, `bedding`, `product-catalog`, `open-meteo`, `cross-platform`
+`dotnet-maui`, `aspnet-core`, `postgresql`, `android`, `windows`, `retail`, `bedding`, `product-catalog`, `open-meteo`, `cross-platform`
 
 ## Settings to review
 

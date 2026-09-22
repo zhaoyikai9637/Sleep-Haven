@@ -2,8 +2,19 @@ using Microsoft.Extensions.Logging;
 
 namespace SleepHaven;
 
-public sealed class MotionPreferences(ILogger<MotionPreferences> logger)
+public sealed class MotionPreferences
 {
+#if WINDOWS
+    private readonly ILogger<MotionPreferences> _logger;
+#endif
+
+    public MotionPreferences(ILogger<MotionPreferences> logger)
+    {
+#if WINDOWS
+        _logger = logger;
+#endif
+    }
+
     public bool AreAnimationsEnabled
     {
         get
@@ -15,7 +26,7 @@ public sealed class MotionPreferences(ILogger<MotionPreferences> logger)
             }
             catch (Exception exception)
             {
-                logger.LogWarning(exception, "Windows animation preferences could not be read.");
+                _logger.LogWarning(exception, "Windows animation preferences could not be read.");
                 return false;
             }
 #else

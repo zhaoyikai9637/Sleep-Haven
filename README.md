@@ -2,11 +2,11 @@
 
 [![CI](https://github.com/zhaoyikai9637/Sleep-Haven/actions/workflows/ci.yml/badge.svg)](https://github.com/zhaoyikai9637/Sleep-Haven/actions/workflows/ci.yml)
 
-SleepHaven is an actively maintained .NET MAUI prototype for browsing and presenting a small bedding catalogue. It explores how a physical bedding retailer could organise products by season, material, and comfort context without requiring a full commerce backend.
+SleepHaven is an actively maintained .NET MAUI prototype for browsing and presenting a small bedding catalogue. Its mobile/desktop client now connects to an ASP.NET Core API backed by PostgreSQL.
 
-The repository is also intended as a compact reference for developers learning cross-platform .NET MAUI UI, local SQLite persistence, and a small weather-backed recommendation flow.
+The repository is also intended as a compact reference for cross-platform .NET MAUI UI, a real HTTP backend, PostgreSQL persistence, and a small weather-backed recommendation flow.
 
-> **Project status:** active prototype. Search, browsing, product details, favourites, and the seeded catalogue work locally. Checkout, payments, live inventory, orders, accounts, analytics, and merchant administration are not implemented.
+> **Project status:** active prototype. Search, browsing, product details, API-backed favourites, database migrations, and the seeded catalogue are implemented. Checkout, payments, live inventory, orders, accounts, analytics, and merchant administration are not implemented.
 
 ## Why it exists
 
@@ -16,7 +16,7 @@ Current use cases:
 
 - browse a seeded bedding catalogue by category and season;
 - search product names, materials, and seasonal categories;
-- save favourites locally on the device;
+- save favourites in PostgreSQL under a per-installation client identifier;
 - use Singapore or Qingdao weather data to select an initial seasonal edit;
 - study a single-project .NET MAUI app targeting Android, iOS, Mac Catalyst, and Windows.
 
@@ -25,9 +25,9 @@ Current use cases:
 - Layered seasonal browsing with explicit previous/next and swipe controls.
 - Weather-informed recommendations based on the upcoming local night temperature.
 - Search suggestions, category browsing, and detailed product pages.
-- On-device favourites stored with SQLite.
+- ASP.NET Core API with PostgreSQL catalogue and per-client favourites.
 - Light and dark themes, reduced-motion handling, and responsive layouts.
-- No account, API key, or remote database required. Weather data comes from [Open-Meteo](https://open-meteo.com/).
+- No customer account or weather API key is required. Weather data comes from [Open-Meteo](https://open-meteo.com/).
 
 ## Demo and screenshots
 
@@ -40,17 +40,20 @@ No current application screenshot is checked in yet because this maintenance pas
 | Area | Implementation |
 | --- | --- |
 | UI | .NET 10, .NET MAUI, XAML |
-| Local data | sqlite-net-pcl / SQLitePCLRaw |
+| Backend | ASP.NET Core 10 minimal API |
+| Database | PostgreSQL 18 / EF Core migrations / Npgsql |
 | Weather | Open-Meteo forecast API, no API key |
 | Targets | Android 7.0+, iOS 15+, Mac Catalyst 15+, Windows 10 1809+ |
 | Repository | GitHub Actions CI, Dependabot, issue and pull-request templates |
 
 ## Repository layout
 
-- `SleepHaven.Core/` builds the platform-neutral catalogue, migration, search, and weather logic used by the app and tests.
-- `SleepHaven.Tests/` contains xUnit validation and migration tests.
-- `Data/` contains SQLite access and the seeded product catalogue.
-- `Models/` contains structured persisted models; display strings are derived rather than stored.
+- `SleepHaven.Core/` builds the platform-neutral API client, catalogue, search, and weather logic used by the app and tests.
+- `SleepHaven.Api/` contains the HTTP API, EF Core mappings, migrations, and catalogue seeding.
+- `SleepHaven.Api.Tests/` exercises the real client/API/database path against PostgreSQL.
+- `SleepHaven.Tests/` contains fast xUnit validation and client-contract tests.
+- `Data/` contains the seeded product catalogue.
+- `Models/` contains structured product models; display strings are derived rather than stored.
 - `Pages/` contains MAUI pages and their code-behind files.
 - `Services/` contains motion preferences and weather integration.
 - `Platforms/` and `Resources/` follow the .NET MAUI single-project layout.
@@ -62,6 +65,7 @@ Requirements:
 
 - .NET 10 SDK (the repository pins the feature band in `global.json`)
 - Visual Studio 2022 with MAUI support, or the required CLI workloads
+- a running SleepHaven API; see [`docs/BACKEND_DATABASE.md`](docs/BACKEND_DATABASE.md)
 
 ```powershell
 dotnet workload install maui-windows
@@ -89,6 +93,7 @@ Requirements:
 - .NET 10 SDK and Android workload
 - JDK 21
 - Android SDK platform and build tools for API 36
+- a backend URL reachable from the emulator or phone
 
 ```powershell
 dotnet workload install android
@@ -100,6 +105,7 @@ dotnet build SleepHaven.csproj `
   -f net10.0-android `
   -p:TargetFrameworks=net10.0-android `
   -p:RuntimeIdentifier=android-arm64 `
+  -p:SleepHavenBackendUrl=http://192.168.1.20:5080 `
   --no-restore
 ```
 
@@ -114,7 +120,7 @@ dotnet restore SleepHaven.Tests/SleepHaven.Tests.csproj
 dotnet test SleepHaven.Tests/SleepHaven.Tests.csproj --no-restore
 ```
 
-The test suite validates seed IDs and image references, structured commerce fields, weather recommendation boundaries and cancellation, cached search behaviour, duplicate-navigation protection, favourite persistence, and migration from the legacy database. The migration policy is documented in [`docs/DATA_MIGRATIONS.md`](docs/DATA_MIGRATIONS.md).
+The fast suite validates seed IDs and image references, structured commerce fields, API-client contracts, weather recommendation boundaries and cancellation, cached search behaviour, and duplicate-navigation protection. The integration suite starts the real API against PostgreSQL and verifies migrations, health, seeding, favourite round-trips, and client isolation. Backend setup and migration policy are documented in [`docs/BACKEND_DATABASE.md`](docs/BACKEND_DATABASE.md).
 
 Product PNGs are losslessly optimized. Their decoded pixels and dimensions were verified unchanged; the tracked image payload was reduced from 28,340,171 to 22,521,049 bytes.
 

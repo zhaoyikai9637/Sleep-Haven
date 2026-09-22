@@ -5,7 +5,7 @@
 ## Highlights
 
 - Cross-platform .NET MAUI bedding catalogue for Android and Windows, with Apple targets present in the project.
-- Search, category browsing, product details, and on-device favourites.
+- Search, category browsing, product details, and PostgreSQL-backed favourites isolated by app installation.
 - Deterministic hero navigation with explicit controls and swipe support.
 - Layered seasonal edits with muted Spring, Summer, Autumn, and Winter palettes.
 - Weather-informed initial season selection using the upcoming local night temperature for Singapore or Qingdao.
@@ -13,7 +13,7 @@
 
 ## Known limitations
 
-- The catalogue is seeded locally; there is no merchant backend, live inventory, checkout, account system, or order processing.
+- The catalogue is seeded by the API, but there is no merchant administration, live inventory, checkout, account system, or order processing.
 - Weather recommendations require internet access and support only the two configured cities.
 - Apple targets are not covered by the current GitHub Actions workflow.
 - No physical-device compatibility result is committed yet.
